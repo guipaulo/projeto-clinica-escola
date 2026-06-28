@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAtendimentoDto } from './dto/create-atendimento.dto';
 import { UpdateAtendimentoDto } from './dto/update-atendimento.dto';
 
@@ -51,4 +51,13 @@ export class AtendimentosService {
     listar() {
         return this.atendimentos;
     }
+
+    buscarPorId(id: number) {
+    const atendimento = this.atendimentos.find((at) => at.id === id);
+
+    if(!atendimento) 
+        throw new NotFoundException('Atendimento não encontrado!');
+
+    return atendimento;
+  }
 }
