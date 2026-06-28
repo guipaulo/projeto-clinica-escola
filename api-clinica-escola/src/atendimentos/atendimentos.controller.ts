@@ -1,4 +1,24 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+import { AtendimentosService } from './atendimentos.service';
+import { CreateAtendimentoDto } from './dto/create-atendimento.dto';
+import { UpdateAtendimentoDto } from './dto/update-atendimento.dto';
 
 @Controller('atendimentos')
-export class AtendimentosController {}
+export class AtendimentosController {
+    constructor(private readonly atendimentosService: AtendimentosService) { }
+
+    @Get()
+    listar() {
+        return this.atendimentosService.listar();
+    }
+
+    @Get(':id')
+    buscarPorId(@Param('id', ParseIntPipe) id: number) {
+        return this.atendimentosService.buscarPorId(id);
+    }
+
+    @Post()
+    criar(@Body() body: CreateAtendimentoDto) {
+        return this.atendimentosService.criar(body);
+    }
+}

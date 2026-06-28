@@ -1,5 +1,16 @@
-import { IsInt, IsString, IsIn, IsNotEmpty } from 'class-validator';
+import { IsString, IsIn, IsNotEmpty } from 'class-validator';
 
 export class CreateAtendimentoDto {
+    @IsString()
+    @IsNotEmpty()
+    aluno!: string;
 
+    @IsString()
+    @IsNotEmpty()
+    profissional!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @IsIn(['Medico', 'Enfermeiro', 'Psicologo', 'Odontologista'])
+    servico!: 'Medico' | 'Enfermeiro' | 'Psicologo' | 'Odontologista';
 }

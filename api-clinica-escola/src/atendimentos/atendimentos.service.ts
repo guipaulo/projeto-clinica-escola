@@ -60,4 +60,22 @@ export class AtendimentosService {
 
     return atendimento;
   }
+
+  criar(dados: CreateAtendimentoDto) {
+    const novoId =
+    this.atendimentos.length > 0 ? Math.max(...this.atendimentos.map((at) => at.id)) + 1 : 1;
+
+    const novoAtendimento: Atendimento = {
+        id: novoId,
+        aluno: dados.aluno,
+        profissional: dados.profissional,
+        servico: dados.servico,
+        data: new Date().toLocaleString('pt-BR'),
+        status: 'Agendado'
+    };
+
+    this.atendimentos.push(novoAtendimento);
+
+    return novoAtendimento;
+  }
 }
