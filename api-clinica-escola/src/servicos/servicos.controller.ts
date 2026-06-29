@@ -11,7 +11,7 @@ export class ServicosController {
     async cadastrarServico(@Body() createServicoDto: CreateServicoDto) {
         return this.servicosService.cadastrarServico(createServicoDto);
     }
-
+    
     @Get()
     listarServicos() {
         // Lógica para listar os serviços
