@@ -1,10 +1,15 @@
-import { Controller, Post, Get, Put, Delete, Param} from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Param, Body, UsePipes, ValidationPipe} from '@nestjs/common';
+import { ServicosService } from './servicos.service';
+import { CreateServicoDto } from './dto/create-servico.dto';
 
 @Controller('servicos')
 export class ServicosController {
+    constructor(private readonly servicosService: ServicosService) {}
+
     @Post()
-    cadastrarServico() {
-        // Lógica para cadastrar um serviço
+    @UsePipes(ValidationPipe)
+    async cadastrarServico(@Body() createServicoDto: CreateServicoDto) {
+        return this.servicosService.cadastrarServico(createServicoDto);
     }
 
     @Get()
