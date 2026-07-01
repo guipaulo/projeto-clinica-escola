@@ -1,19 +1,27 @@
-import { Controller, Post, Get, Patch, Param, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, Patch, Param, ParseIntPipe } from '@nestjs/common';
+import { HorariosService } from './horarios.service';
+import { CreateHorarioDto } from './dto/create-horario.dto';
+import { UpdateHorarioDto } from './dto/update-horario.dto';
 
 @Controller('horarios')
 export class HorariosController {
-    @Post()
-    criarHorario() {
-        // Lógica para criar um novo horário
-    }
+  constructor(private readonly horariosService: HorariosService) {}
 
-    @Get('disponiveis')
-    listarHorarios(@Query('servicoId') servicoId: string, @Query('data') data: string) {
-        // Lógica para listar todos os horários
-    }
+  @Post('disponibilizar')
+  async disponibilizar(@Body() createHorarioDto: CreateHorarioDto) {
+    return this.horariosService.disponibilizar(createHorarioDto);
+  }
 
-    @Patch(':id/status')
-    atualizarHorario(@Param('id') id: string) {
-        // Lógica para atualizar um horário específico
-    }
+  @Get('disponiveis')
+  async listarDisponiveis(@Query('profissionalId') profissionalId?: string) {
+    return this.horariosService.listarDisponiveis(profissionalId);
+  }
+
+  @Patch(':id/status')
+  async atualizarStatus(
+    @Param('id') id: string,
+    @Body() updateStatusDto: UpdateHorarioDto,
+  ) {
+    return this.horariosService.atualizarStatus(id, updateStatusDto);
+  }
 }

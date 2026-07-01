@@ -1,7 +1,6 @@
 import { IsNumber, IsString, IsNotEmpty, IsInt, Min, IsOptional } from 'class-validator';
 
 export class CreateServicoDto {
-    @IsNumber()
     @IsNotEmpty({ message: 'O nome do serviço é obrigatório.' })
     nome: string;
 

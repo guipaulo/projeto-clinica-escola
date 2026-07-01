@@ -1,6 +1,7 @@
-import { Controller, Post, Get, Put, Delete, Param, Body, UsePipes, ValidationPipe} from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Param, Body, UsePipes, ValidationPipe, ParseIntPipe } from '@nestjs/common';
 import { ServicosService } from './servicos.service';
 import { CreateServicoDto } from './dto/create-servico.dto';
+import { UpdateServiceDto } from './dto/update-servico.dto';
 
 @Controller('servicos')
 export class ServicosController {
@@ -11,19 +12,23 @@ export class ServicosController {
     async cadastrarServico(@Body() createServicoDto: CreateServicoDto) {
         return this.servicosService.cadastrarServico(createServicoDto);
     }
-    
+
     @Get()
-    listarServicos() {
-        // Lógica para listar os serviços
+    async listarServicos() {
+        return this.servicosService.listarServicos();
     }
 
     @Put(':id')
-    atualizarServico(@Param('id') id: string) {
-        // Lógica para atualizar um serviço específico
+    @UsePipes(ValidationPipe)
+    async atualizarServico(
+        @Param('id', new ParseIntPipe()) id: number,
+        @Body() updateServicoDto: UpdateServiceDto,
+    ) {
+        return this.servicosService.atualizarServico(id, updateServicoDto);
     }
 
     @Delete(':id')
-    deletarServico(@Param('id') id: string) {
-        // Lógica para deletar um serviço específico
+    async deletarServico(@Param('id', new ParseIntPipe()) id: number) {
+        return this.servicosService.deletarServico(id);
     }
 }
