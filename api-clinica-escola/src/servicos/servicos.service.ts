@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Servico } from '../entidades/servico.entidade';
 import { CreateServicoDto } from './dto/create-servico.dto';
 import { UpdateServiceDto } from './dto/update-servico.dto';
@@ -36,7 +36,7 @@ export class ServicosService {
             duracaoEmMinutos: createServicoDto.duracaoEmMinutos,
             ativo: true,
         };
-        this.servicos.push(novoServico);        
+        this.servicos.push(novoServico);
         return novoServico;
     }
 
@@ -47,10 +47,12 @@ export class ServicosService {
         return this.servicos;
     }
 
-    //logica para atualizar um serviço específico usando put
     async atualizarServico(id: number, body: UpdateServiceDto): Promise<Servico | undefined> {
         const servicoId = id;
         const servico = this.servicos.find(s => s.id === servicoId);
+        if (!servico) {
+            throw new NotFoundException(`Serviço com ID ${id} não encontrado.`);
+        }
         if (servico) {
             Object.assign(servico, body);
             return servico;

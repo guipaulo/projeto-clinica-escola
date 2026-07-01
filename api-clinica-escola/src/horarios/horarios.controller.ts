@@ -13,13 +13,13 @@ export class HorariosController {
   }
 
   @Get('disponiveis')
-  async listarDisponiveis(@Query('profissionalId') profissionalId?: string) {
+  async listarDisponiveis(@Query('profissionalId', ParseIntPipe) profissionalId?: number) {
     return this.horariosService.listarDisponiveis(profissionalId);
   }
 
   @Patch(':id/status')
   async atualizarStatus(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateStatusDto: UpdateHorarioDto,
   ) {
     return this.horariosService.atualizarStatus(id, updateStatusDto);

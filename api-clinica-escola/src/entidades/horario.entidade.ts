@@ -1,10 +1,10 @@
 export class Horario {
-  id: string;
+  id: number;
   data: string;
   horaInicio: string;
   horaFim: string;
-  servicoId: string;
-  profissionalId: string;
-  pacienteId?: string;
+  servicoId: number;
+  profissionalId: number;
+  pacienteId?: number;
   status: 'disponivel' | 'agendado' | 'cancelado';
 }
