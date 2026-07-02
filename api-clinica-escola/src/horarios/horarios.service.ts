@@ -8,7 +8,7 @@ export class HorariosService {
     private horarios: Horario[] = [
         {
             id: 1,
-            data: "01/07/2026", // Atualizado para o formato BR
+            data: "01/07/2026", 
             horaInicio: "08:00",
             horaFim: "09:00",
             servicoId: 1, 
@@ -18,7 +18,7 @@ export class HorariosService {
         },
         {
             id: 2,
-            data: "01/07/2026", // Atualizado para o formato BR
+            data: "01/07/2026", 
             horaInicio: "09:00",
             horaFim: "10:00",
             servicoId: 2, 
@@ -28,7 +28,7 @@ export class HorariosService {
         },
         {
             id: 3,
-            data: "02/07/2026", // Atualizado para o formato BR
+            data: "02/07/2026", 
             horaInicio: "14:00",
             horaFim: "15:00",
             servicoId: 3, 

@@ -5,7 +5,7 @@ import { UpdateHorarioDto } from './dto/update-horario.dto';
 
 @Controller('horarios')
 export class HorariosController {
-  constructor(private readonly horariosService: HorariosService) {}
+  constructor(private readonly horariosService: HorariosService) { }
 
   @Post('disponibilizar')
   async disponibilizar(@Body() createHorarioDto: CreateHorarioDto) {
@@ -13,7 +13,9 @@ export class HorariosController {
   }
 
   @Get('disponiveis')
-  async listarDisponiveis(@Query('profissionalId', ParseIntPipe) profissionalId?: number) {
+  async listarDisponiveis(
+    @Query('profissionalId', new ParseIntPipe({ optional: true })) profissionalId?: number
+  ) {
     return this.horariosService.listarDisponiveis(profissionalId);
   }
 
