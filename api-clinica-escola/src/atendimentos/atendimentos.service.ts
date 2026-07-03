@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { CreateAtendimentoDto } from './dto/create-atendimento.dto';
 import { UpdateAtendimentoDto } from './dto/update-atendimento.dto';
 
@@ -8,7 +8,7 @@ type Atendimento = {
     profissional: string;
     especialidade: 'Medico' | 'Enfermeiro' | 'Psicologo' | 'Odontologista';
     data: string;
-    status: 'Disponivel'| 'Agendado' | 'Cancelado';
+    status: 'Agendado' | 'Concluido' | 'Cancelado';
 }
 
 @Injectable()
@@ -44,7 +44,7 @@ export class AtendimentosService {
             profissional: 'Dra. Carla Silva',
             especialidade: 'Odontologista',
             data: '28/06/2026 14:00',
-            status: 'Agendado'
+            status: 'Concluido'
         }
     ];
 
@@ -71,11 +71,27 @@ export class AtendimentosService {
         profissional: dados.profissional,
         especialidade: dados.especialidade,
         data: new Date().toLocaleString('pt-BR'),
-        status: 'Disponivel'
+        status: 'Agendado'
     };
 
     this.atendimentos.push(novoAtendimento);
 
     return novoAtendimento;
+  }
+
+  atualizarAtendimento(id:number, dados: UpdateAtendimentoDto) {
+    const atendimentoAtual = this.buscarPorId(id);
+
+    if (atendimentoAtual.status === 'Cancelado')
+        throw new ConflictException('Um atendimento cancelado não pode ser alterado!');
+
+    if (atendimentoAtual.status === 'Agendado' && dados.especialidade !== undefined)
+        throw new ConflictException('Não é permitido alterar a especialidade de um atendimento agendado!');
+
+    const atendimentoAtualizado: Atendimento  = {...atendimentoAtual, ...dados};
+
+    this.atendimentos = this.atendimentos.map((at) => at.id === id ? atendimentoAtualizado : at);
+
+    return atendimentoAtualizado;
   }
 }
