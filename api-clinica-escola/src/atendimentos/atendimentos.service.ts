@@ -53,55 +53,55 @@ export class AtendimentosService {
     }
 
     buscarPorId(id: number) {
-    const atendimento = this.atendimentos.find((at) => at.id === id);
+        const atendimento = this.atendimentos.find((at) => at.id === id);
 
-    if(!atendimento) 
-        throw new NotFoundException('Atendimento não encontrado!');
+        if (!atendimento)
+            throw new NotFoundException('Atendimento não encontrado!');
 
-    return atendimento;
-  }
+        return atendimento;
+    }
 
-  criarAtendimento(dados: CreateAtendimentoDto) {
-    const novoId =
-    this.atendimentos.length > 0 ? Math.max(...this.atendimentos.map((at) => at.id)) + 1 : 1;
+    criarAtendimento(dados: CreateAtendimentoDto) {
+        const novoId =
+            this.atendimentos.length > 0 ? Math.max(...this.atendimentos.map((at) => at.id)) + 1 : 1;
 
-    const novoAtendimento: Atendimento = {
-        id: novoId,
-        aluno: dados.aluno,
-        profissional: dados.profissional,
-        especialidade: dados.especialidade,
-        data: new Date().toLocaleString('pt-BR'),
-        status: 'Agendado'
-    };
+        const novoAtendimento: Atendimento = {
+            id: novoId,
+            aluno: dados.aluno,
+            profissional: dados.profissional,
+            especialidade: dados.especialidade,
+            data: new Date().toLocaleString('pt-BR'),
+            status: 'Agendado'
+        };
 
-    this.atendimentos.push(novoAtendimento);
+        this.atendimentos.push(novoAtendimento);
 
-    return novoAtendimento;
-  }
+        return novoAtendimento;
+    }
 
-  atualizarAtendimento(id:number, dados: UpdateAtendimentoDto) {
-    const atendimentoAtual = this.buscarPorId(id);
+    atualizarAtendimento(id: number, dados: UpdateAtendimentoDto) {
+        const atendimentoAtual = this.buscarPorId(id);
 
-    if (atendimentoAtual.status === 'Cancelado')
-        throw new ConflictException('Um atendimento cancelado não pode ser alterado!');
+        if (atendimentoAtual.status === 'Cancelado')
+            throw new ConflictException('Um atendimento cancelado não pode ser alterado!');
 
-    if (atendimentoAtual.status === 'Agendado' && dados.especialidade !== undefined)
-        throw new ConflictException('Não é permitido alterar a especialidade de um atendimento agendado!');
+        if (atendimentoAtual.status === 'Agendado' && dados.especialidade !== undefined)
+            throw new ConflictException('Não é permitido alterar a especialidade de um atendimento agendado!');
 
-    const atendimentoAtualizado: Atendimento  = {...atendimentoAtual, ...dados};
+        const atendimentoAtualizado: Atendimento = { ...atendimentoAtual, ...dados };
 
-    this.atendimentos = this.atendimentos.map((at) => at.id === id ? atendimentoAtualizado : at);
+        this.atendimentos = this.atendimentos.map((at) => at.id === id ? atendimentoAtualizado : at);
 
-    return atendimentoAtualizado;
-  }
+        return atendimentoAtualizado;
+    }
 
-  removerAtendimento(id: number) {
-    const existe = this.atendimentos.some((t) => t.id === id);
+    removerAtendimento(id: number) {
+        const existe = this.atendimentos.some((t) => t.id === id);
 
-    if (!existe)
-        throw new NotFoundException('Atendimento não encontrado');
+        if (!existe)
+            throw new NotFoundException('Atendimento não encontrado');
 
-    this.atendimentos = this.atendimentos.filter((at) => at.id !== id);
-  }
+        this.atendimentos = this.atendimentos.filter((at) => at.id !== id);
+    }
 }
 
