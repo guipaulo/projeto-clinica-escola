@@ -9,7 +9,7 @@ export class AtendimentosController {
 
     @Get()
     listar() {
-        return this.atendimentosService.listar();
+        return this.atendimentosService.listarAtendimentos();
     }
 
     @Get(':id')
@@ -19,6 +19,6 @@ export class AtendimentosController {
 
     @Post()
     criar(@Body() body: CreateAtendimentoDto) {
-        return this.atendimentosService.criar(body);
+        return this.atendimentosService.criarAtendimento(body);
     }
 }

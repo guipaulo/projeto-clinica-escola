@@ -6,9 +6,9 @@ type Atendimento = {
     id: number;
     aluno: string;
     profissional: string;
-    servico: 'Medico' | 'Enfermeiro' | 'Psicologo' | 'Odontologista';
+    especialidade: 'Medico' | 'Enfermeiro' | 'Psicologo' | 'Odontologista';
     data: string;
-    status: 'Agendado' | 'Confirmado' | 'Cancelado';
+    status: 'Disponivel'| 'Agendado' | 'Cancelado';
 }
 
 @Injectable()
@@ -18,7 +18,7 @@ export class AtendimentosService {
             id: 1,
             aluno: 'Paulo Guilherme',
             profissional: 'Dra. Ana Beatriz',
-            servico: 'Medico',
+            especialidade: 'Medico',
             data: '28/06/2026 08:30',
             status: 'Agendado'
         },
@@ -26,15 +26,15 @@ export class AtendimentosService {
             id: 2,
             aluno: 'José Henrique',
             profissional: 'Enf. Ana Célia',
-            servico: 'Enfermeiro',
+            especialidade: 'Enfermeiro',
             data: '28/06/2026 09:15',
-            status: 'Confirmado'
+            status: 'Agendado'
         },
         {
             id: 3,
             aluno: 'Carlos Eduardo',
             profissional: 'Shirllane Nunes',
-            servico: 'Psicologo',
+            especialidade: 'Psicologo',
             data: '28/06/2026 09:15',
             status: 'Cancelado'
         },
@@ -42,13 +42,13 @@ export class AtendimentosService {
             id: 4,
             aluno: 'Ellen Mayara',
             profissional: 'Dra. Carla Silva',
-            servico: 'Odontologista',
+            especialidade: 'Odontologista',
             data: '28/06/2026 14:00',
-            status: 'Confirmado'
+            status: 'Agendado'
         }
     ];
 
-    listar() {
+    listarAtendimentos() {
         return this.atendimentos;
     }
 
@@ -61,7 +61,7 @@ export class AtendimentosService {
     return atendimento;
   }
 
-  criar(dados: CreateAtendimentoDto) {
+  criarAtendimento(dados: CreateAtendimentoDto) {
     const novoId =
     this.atendimentos.length > 0 ? Math.max(...this.atendimentos.map((at) => at.id)) + 1 : 1;
 
@@ -69,9 +69,9 @@ export class AtendimentosService {
         id: novoId,
         aluno: dados.aluno,
         profissional: dados.profissional,
-        servico: dados.servico,
+        especialidade: dados.especialidade,
         data: new Date().toLocaleString('pt-BR'),
-        status: 'Agendado'
+        status: 'Disponivel'
     };
 
     this.atendimentos.push(novoAtendimento);

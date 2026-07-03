@@ -12,5 +12,5 @@ export class CreateAtendimentoDto {
     @IsString()
     @IsNotEmpty()
     @IsIn(['Medico', 'Enfermeiro', 'Psicologo', 'Odontologista'])
-    servico!: 'Medico' | 'Enfermeiro' | 'Psicologo' | 'Odontologista';
+    especialidade!: 'Medico' | 'Enfermeiro' | 'Psicologo' | 'Odontologista';
 }
