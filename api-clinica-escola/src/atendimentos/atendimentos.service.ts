@@ -94,4 +94,14 @@ export class AtendimentosService {
 
     return atendimentoAtualizado;
   }
+
+  removerAtendimento(id: number) {
+    const existe = this.atendimentos.some((t) => t.id === id);
+
+    if (!existe)
+        throw new NotFoundException('Atendimento não encontrado');
+
+    this.atendimentos = this.atendimentos.filter((at) => at.id !== id);
+  }
 }
+
