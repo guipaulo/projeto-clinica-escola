@@ -80,23 +80,24 @@ npm install
 4. Rodar o projeto
 ```bash
 npm run start:dev
-
+```
 A API estará disponível em:
-
+```bash
 http://localhost:3000
 ```
-#Variáveis de ambiente 
-PORT=3000
-JWT_SECRET=sua_chave_secreta
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=seu_usuario
-DB_PASSWORD=sua_senha
-DB_NAME=clinica_escola
+## Variáveis de ambiente 
 
-#Decisões técnicas
-NestJS: escolhido pela arquitetura escalável e modular
-Passport: padrão consolidado para autenticação
-class-validator: validação declarativa e integrada ao NestJS
-Modularização: separação entre modulos para organização e manutenção
-Guards: controle de acesso desacoplado da lógica de negócio
+- PORT=3000
+- JWT_SECRET=sua_chave_secreta
+- DB_HOST=localhost
+- DB_PORT=5432
+- DB_USER=seu_usuario
+- DB_PASSWORD=sua_senha
+- DB_NAME=clinica_escola
+
+## Decisões técnicas
+- NestJS: escolhido pela arquitetura escalável e modular
+- Passport: padrão consolidado para autenticação
+- class-validator: validação declarativa e integrada ao NestJS
+- Modularização: separação entre modulos para organização e manutenção
+- Guards: controle de acesso desacoplado da lógica de negócio
