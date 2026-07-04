@@ -6,21 +6,11 @@ Cadastro de profissionais, serviços, horários, pacientes e atendimentos, com r
 
 ###Integrantes: 
 <div>
-  <a href="https://www.instagram.com/ingridy_luzzia/" target="_blank">
-    <img src="https://img.shields.io/badge/-Instagram-%23E4405F?style=for-the-badge&logo=instagram&logoColor=white">
-  </a>
-
-  <a href="mailto:ingridycandido@outlook.com">
-    <img src="https://img.shields.io/badge/-Email-%23333?style=for-the-badge&logo=gmail&logoColor=white">
-  </a>
-
-  <a href="https://github.com/guipaulo" target="Paulo">Paulo Guilherme Silva de Araújo
-  </a>
+  <a href="https://github.com/IngridyCandido">Ingridy Luzia Silva Cândido</a>
+  <a href="https://github.com/zehelll">Jose Henrique Aviz de Farias</a>
+  <a href="https://github.com/nicoletsi">Nicole Gabriel Lucena de Carvalho</a>
+  <a href="https://github.com/guipaulo">Paulo Guilherme Silva de Araújo</a>
 </div>
-Ingridy Luzia Silva Cândido
-Jose Henrique Aviz de Farias
-Nicole Gabriel Lucena de Carvalho
-Paulo Guilherme Silva de Araújo
 
 #Arquitetura
 O projeto segue a arquitetura modular do NestJS:
