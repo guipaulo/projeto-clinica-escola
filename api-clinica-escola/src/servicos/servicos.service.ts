@@ -8,59 +8,62 @@ export class ServicosService {
     private servicos: Servico[] = [
         {
             id: 1,
-            "nome": "Consulta de Fisioterapia Traumato-Ortopédica",
-            "descricao": "Atendimento supervisionado para reabilitação de lesões musculares e fraturas.",
-            "duracaoEmMinutos": 50,
-            "ativo": true
+            "nome": "Sessão de Fisioterapia",
+            "descricao": "Sessão de fisioterapia para reabilitação e fortalecimento muscular.",
+            "duracao": 70,
         },
         {
             id: 2,
-            "nome": "Avaliação Psicológica Infantil",
-            "descricao": "Aplicação de testes e anamnese com crianças da comunidade.",
-            "duracaoEmMinutos": 60,
-            "ativo": true
+            "nome": "Avaliação Psicológica",
+            "descricao": "Primeira consulta de triagem para levantamento de histórico do paciente.",
+            "duracao": 60,
         },
         {
             id: 3,
-            "nome": "Limpeza de Pele Profunda",
-            "duracaoEmMinutos": 90,
-            "ativo": false
+            "nome": "Acompanhamento e Orientação Nutricional",
+            "descricao": "Acompanhamento contínuo e orientação sobre alimentação saudável.",
+            "duracao": 40,
         }
     ]
 
-    async cadastrarServico(createServicoDto: CreateServicoDto): Promise<Servico> {
+    listarServicos() {
+        return this.servicos;
+    }
+
+    cadastrarServico(createServicoDto: CreateServicoDto) {
         const novoServico: Servico = {
             id: this.servicos.length + 1,
             nome: createServicoDto.nome,
             descricao: createServicoDto.descricao,
-            duracaoEmMinutos: createServicoDto.duracaoEmMinutos,
-            ativo: true,
+            duracao: createServicoDto.duracao,
         };
+
         this.servicos.push(novoServico);
         return novoServico;
     }
 
-    async listarServicos(): Promise<Servico[]> {
-        if (this.servicos.length === 0) {
-            console.log('nao ha nenhum serviço cadastrado');
-        }
-        return this.servicos;
-    }
+    atualizarServico(id: number, body: UpdateServiceDto) {
+        const servico = this.servicos.find(s => s.id === id);
 
-    async atualizarServico(id: number, body: UpdateServiceDto): Promise<Servico | undefined> {
-        const servicoId = id;
-        const servico = this.servicos.find(s => s.id === servicoId);
         if (!servico) {
-            throw new NotFoundException(`Serviço com ID ${id} não encontrado.`);
+            throw new NotFoundException('Serviço com ID ${id} não encontrado.');
         }
-        if (servico) {
-            Object.assign(servico, body);
-            return servico;
-        }
+
+        const camposAtualizados = Object.entries(body).reduce((acc, [key, value]) => {
+            if (value !== undefined) {
+                acc[key as keyof UpdateServiceDto] = value;
+            }
+            return acc;
+        }, {} as Partial<UpdateServiceDto>);
+
+        const servicoAtualizado: Servico = { ...servico, ...camposAtualizados };
+        this.servicos = this.servicos.map((s) => s.id === id ? servicoAtualizado : s);
+
+        return servicoAtualizado;
     }
 
-    async deletarServico(id: number): Promise<void> {
-        const servicoId = id;
-        this.servicos = this.servicos.filter(s => s.id !== servicoId);
+    deletarServico(id: number) {
+        this.servicos = this.servicos.filter(s => s.id !== id);
+        return 'Serviço deletado com sucesso.';
     }
 }

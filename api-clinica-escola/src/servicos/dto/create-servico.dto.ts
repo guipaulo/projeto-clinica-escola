@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsNotEmpty, IsInt, Min, IsOptional } from 'class-validator';
+import { IsNumber, IsString, IsNotEmpty, IsOptional, Min } from 'class-validator';
 
 export class CreateServicoDto {
     @IsNotEmpty({ message: 'O nome do serviço é obrigatório.' })
@@ -8,7 +8,7 @@ export class CreateServicoDto {
     @IsOptional()
     descricao?: string;
 
-    @IsInt()
+    @IsNumber()
     @Min(15, { message: 'A duração mínima do serviço deve ser de 15 minutos.' })
-    duracaoEmMinutos: number;
+    duracao: number;
 }

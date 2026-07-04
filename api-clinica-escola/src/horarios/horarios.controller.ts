@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Query, Patch, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Post, Body, Get, Delete, Query, Patch, Param, ParseIntPipe } from '@nestjs/common';
 import { HorariosService } from './horarios.service';
 import { CreateHorarioDto } from './dto/create-horario.dto';
 import { UpdateHorarioDto } from './dto/update-horario.dto';
@@ -7,23 +7,28 @@ import { UpdateHorarioDto } from './dto/update-horario.dto';
 export class HorariosController {
   constructor(private readonly horariosService: HorariosService) { }
 
-  @Post('disponibilizar')
-  async disponibilizar(@Body() createHorarioDto: CreateHorarioDto) {
-    return this.horariosService.disponibilizar(createHorarioDto);
-  }
-
   @Get('disponiveis')
-  async listarDisponiveis(
+    listarDisponiveis(
     @Query('profissionalId', new ParseIntPipe({ optional: true })) profissionalId?: number
   ) {
     return this.horariosService.listarDisponiveis(profissionalId);
   }
 
-  @Patch(':id/status')
-  async atualizarStatus(
+  @Post('disponibilizar')
+    disponibilizarServico(@Body() createHorarioDto: CreateHorarioDto) {
+    return this.horariosService.disponibilizarServico(createHorarioDto);
+  }
+
+  @Delete(':id')
+    deletarServico(@Param('id', ParseIntPipe) id: number) {
+    return this.horariosService.deletarServico(id);
+  }
+
+  @Patch(':id')
+    atualizarStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateStatusDto: UpdateHorarioDto,
+    @Body() updateHorarioDto: UpdateHorarioDto,
   ) {
-    return this.horariosService.atualizarStatus(id, updateStatusDto);
+    return this.horariosService.atualizarStatus(id, updateHorarioDto);
   }
 }
