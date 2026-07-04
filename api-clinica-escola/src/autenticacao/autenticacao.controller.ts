@@ -1,17 +1,12 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, Get } from '@nestjs/common';
 import type { Request } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { AutenticacaoService } from './autenticacao.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import type { PerfilUsuario } from '../usuarios/usuarios.service';
+import type { UsuarioSemSenha } from '../usuarios/usuarios.service';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
-type UsuarioAutenticado = {
-  id: number;
-  nome: string;
-  email: string;
-  perfil: PerfilUsuario;
-  ativo: boolean;
-};
+type UsuarioAutenticado = UsuarioSemSenha;
 
 type RequisicaoComUsuario = Request & {
   user: UsuarioAutenticado;
@@ -37,8 +32,14 @@ export class AutenticacaoController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   login(@Req() request: RequisicaoComUsuario) {
+    return this.authService.login(request.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('perfil')
+  perfil(@Req() request: RequisicaoComUsuario) {
     return {
-      mensagem: 'Login realizado com Passport local',
+      mensagem: 'Token válido',
       usuario: request.user,
     };
   }

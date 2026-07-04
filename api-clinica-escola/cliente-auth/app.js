@@ -18,23 +18,24 @@ form.addEventListener('submit', async (event) => {
 
     const corpo = await response.json();
 
-    saida.textContent = JSON.stringify(
-      {
-        status: response.status,
-        ok: response.ok,
-        corpo,
-      },
-      null,
-      2,
-    );
+    // Remove classes antigas
+    saida.classList.remove('sucesso', 'erro');
+
+    if (response.ok) {
+    localStorage.setItem("token", corpo.access_token);
+
+    saida.classList.remove("erro");
+    saida.classList.add("sucesso");
+    saida.textContent = "Login realizado com sucesso!";
+
+    setTimeout(() => {
+        window.location.href = "home.html";
+    }, 1000);
+    }
+
   } catch (erro) {
-    saida.textContent = JSON.stringify(
-      {
-        mensagem: 'Falha de rede ou CORS',
-        detalhe: erro.message,
-      },
-      null,
-      2,
-    );
+    saida.classList.remove('sucesso');
+    saida.classList.add('erro');
+    saida.textContent = `Falha de rede: ${erro.message}`;
   }
 });

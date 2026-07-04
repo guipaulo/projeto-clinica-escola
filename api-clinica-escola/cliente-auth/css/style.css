@@ -1,0 +1,191 @@
+/* ===========================
+   RESET
+=========================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root{
+    --cor-primaria:#2563eb;
+    --cor-primaria-hover:#1d4ed8;
+    --cor-secundaria:#eff6ff;
+    --cor-texto:#1f2937;
+    --cor-input:#f8fafc;
+    --cor-borda:#d1d5db;
+    --cor-sucesso:#16a34a;
+    --cor-erro:#dc2626;
+    --sombra:0 15px 35px rgba(0,0,0,.15);
+}
+
+body{
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg,#2563eb,#4f46e5,#7c3aed);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+/* ===========================
+   CARD
+=========================== */
+
+main{
+    background:#fff;
+    width:100%;
+    max-width:430px;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:var(--sombra);
+    animation: aparecer .5s ease;
+}
+
+/* ===========================
+   TÍTULO
+=========================== */
+
+h1{
+    text-align:center;
+    color:var(--cor-texto);
+    margin-bottom:35px;
+    font-size:2rem;
+    font-weight:700;
+}
+
+/* ===========================
+   FORMULÁRIO
+=========================== */
+
+form{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+form div{
+    display:flex;
+    flex-direction:column;
+}
+
+label{
+    margin-bottom:8px;
+    font-size:.95rem;
+    color:#4b5563;
+    font-weight:600;
+}
+
+/* ===========================
+   INPUTS
+=========================== */
+
+input{
+    padding:14px 16px;
+    border:2px solid var(--cor-borda);
+    border-radius:10px;
+    background:var(--cor-input);
+    font-size:1rem;
+    transition:.3s;
+    outline:none;
+}
+
+input:focus{
+    border-color:var(--cor-primaria);
+    background:#fff;
+    box-shadow:0 0 0 4px rgba(37,99,235,.15);
+}
+
+/* ===========================
+   BOTÃO
+=========================== */
+
+button{
+    margin-top:10px;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:var(--cor-primaria);
+    color:#fff;
+    font-size:1rem;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:var(--cor-primaria-hover);
+    transform:translateY(-2px);
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+/* ===========================
+   SAÍDA
+=========================== */
+
+#saida{
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 15px;
+    text-align: center;
+    font-weight: 500;
+}
+
+#saida.sucesso{
+    display: block;
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #22c55e;
+}
+
+#saida.erro{
+    display: block;
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #ef4444;
+}
+
+/* Scroll */
+
+#saida::-webkit-scrollbar{
+    width:8px;
+}
+
+#saida::-webkit-scrollbar-thumb{
+    background:#4b5563;
+    border-radius:20px;
+}
+
+#saida::-webkit-scrollbar-track{
+    background:#1f2937;
+}
+
+/* ===========================
+   PLACEHOLDER
+=========================== */
+
+input::placeholder{
+    color:#9ca3af;
+}
+
+/* ===========================
+   ANIMAÇÃO
+=========================== */
+
+@keyframes aparecer{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}

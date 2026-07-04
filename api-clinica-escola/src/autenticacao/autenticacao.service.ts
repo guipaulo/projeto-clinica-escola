@@ -1,14 +1,14 @@
-import {
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import {ForbiddenException, Injectable, UnauthorizedException,} from '@nestjs/common';
 import { UsuariosService, UsuarioSemSenha } from '../usuarios/usuarios.service';
+import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AutenticacaoService {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(
+    private readonly usuariosService: UsuariosService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async validarUsuario(
     email: string,
@@ -35,8 +35,16 @@ export class AutenticacaoService {
     return this.usuariosService.removerSenha(usuario);
   }
 
-  async login(dados: LoginDto) {
-    const usuario = await this.validarUsuario(dados.email, dados.senha);
-    return { mensagem: 'Login válido', usuario };
+  async login(usuario: UsuarioSemSenha) {
+    const payload = {
+      sub: usuario.id,
+      email: usuario.email,
+      perfil: usuario.perfil,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      usuario,
+    };
   }
 }

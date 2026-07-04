@@ -1,0 +1,26 @@
+@media (max-width: 600px){
+
+    body{
+        padding:15px;
+    }
+
+    main{
+        padding:30px 20px;
+        border-radius:15px;
+    }
+
+    h1{
+        font-size:1.7rem;
+        margin-bottom:25px;
+    }
+
+    input,
+    button{
+        font-size:.95rem;
+        padding:13px;
+    }
+
+    pre{
+        font-size:.8rem;
+    }
+}
