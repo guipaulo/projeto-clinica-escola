@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CriarUsuarioDto } from './dto/criar-usuario.dto';
 
-export type PerfilUsuario = 'admin' | 'estudante';
+export type PerfilUsuario = 'admin' | 'aluno' | 'profissional';
 
 export type Usuario = {
   id: number;
@@ -32,7 +32,7 @@ export class UsuariosService {
       nome: 'Bruno Costa',
       email: 'bruno@example.com',
       senha: 'abcdef',
-      perfil: 'estudante',
+      perfil: 'aluno',
       ativo: true,
       criadoEm: new Date().toISOString(),
     },
@@ -41,18 +41,18 @@ export class UsuariosService {
       nome: 'Carla Souza',
       email: 'carla@example.com',
       senha: 'inativa',
-      perfil: 'estudante',
+      perfil: 'profissional',
       ativo: false,
       criadoEm: new Date().toISOString(),
     },
   ];
 
   criar(dados: CriarUsuarioDto) {
-    const NovoUsuario: Usuario = { id: this.usuarios.length + 1, ...dados,  criadoEm: new Date().toISOString(),};
+    const novoUsuario: Usuario = { id: this.usuarios.length + 1, ...dados, perfil: dados.perfil, ativo: true,  criadoEm: new Date().toISOString(),};
+
+    this.usuarios.push(novoUsuario);
     
-    this.usuarios.push(NovoUsuario);
-    
-    return NovoUsuario;
+    return novoUsuario;
   }
 
   listar() {

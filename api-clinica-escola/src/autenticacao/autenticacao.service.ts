@@ -15,13 +15,13 @@ export class AutenticacaoService {
     senha: string,
   ): Promise<UsuarioSemSenha> {
     if (!email || !senha) {
-      throw new UnauthorizedException('Credenciais inválidas');
+      throw new UnauthorizedException('Email está vazio, undefined, null ou false. Ou senha está vazia, undefined, null ou false.');
     }
 
     const usuario = await this.usuariosService.buscarPorEmail(email);
 
     if (!usuario) {
-      throw new UnauthorizedException('Credenciais inválidas');
+      throw new UnauthorizedException('Usuário inválido');
     }
 
     if (!usuario.ativo) {
@@ -29,7 +29,7 @@ export class AutenticacaoService {
     }
 
     if (usuario.senha !== senha) {
-      throw new UnauthorizedException('Credenciais inválidas');
+      throw new UnauthorizedException('Senha incorreta');
     }
 
     return this.usuariosService.removerSenha(usuario);
