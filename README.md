@@ -87,13 +87,8 @@ http://localhost:3000
 ```
 ## Variáveis de ambiente 
 
-- PORT=3000
-- JWT_SECRET=sua_chave_secreta
-- DB_HOST=localhost
-- DB_PORT=5432
-- DB_USER=seu_usuario
-- DB_PASSWORD=sua_senha
-- DB_NAME=clinica_escola
+- JWT_SECRET=senha-super-secreta-clinica-escola
+- JWT_SECRET=sua-chave-aqui
 
 ## Decisões técnicas
 - NestJS: escolhido pela arquitetura escalável e modular
