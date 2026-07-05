@@ -1,6 +1,7 @@
 import {ForbiddenException, Injectable, UnauthorizedException,} from '@nestjs/common';
 import { UsuariosService, UsuarioSemSenha } from '../usuarios/usuarios.service';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 
 @Injectable()
@@ -13,7 +14,7 @@ export class AutenticacaoService {
   async validarUsuario(
     email: string,
     senha: string,
-  ): Promise<UsuarioSemSenha> {
+  ): Promise<UsuarioSemSenha | null>  {
     if (!email || !senha) {
       throw new UnauthorizedException('Email está vazio, undefined, null ou false. Ou senha está vazia, undefined, null ou false.');
     }
@@ -28,8 +29,13 @@ export class AutenticacaoService {
       throw new ForbiddenException('Usuário inativo');
     }
 
-    if (usuario.senha !== senha) {
-      throw new UnauthorizedException('Senha incorreta');
+    const senhaValida = await bcrypt.compare(
+        senha,
+        usuario.senha,
+    );
+
+    if (!senhaValida) {
+      return null;
     }
 
     return this.usuariosService.removerSenha(usuario);
