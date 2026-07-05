@@ -1,22 +1,22 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { CreateHorarioDto } from './dto/create-horario.dto';
 import { UpdateHorarioDto } from './dto/update-horario.dto';
-import { Horario } from 'src/entidades/horario.entidade';
+
+type Horario = {
+    id: number,
+    data: string,
+    horaInicio: string,
+    horaFim: string,
+    profissionalId: number,
+    status: 'disponivel' | 'indisponivel',
+}
 
 @Injectable()
 export class HorariosService {
-    private validarIntervalo(horaInicio: string, horaFim: string) {
-        const inicio = new Date(`1970-01-01T${horaInicio}:00`);
-        const fim = new Date(`1970-01-01T${horaFim}:00`);
-
-        if (fim <= inicio) {
-            throw new BadRequestException('A hora de término deve ser posterior à hora de início.');
-        }
-    }
-    
     private horarios: Horario[] = [
         {
             id: 1,
+            data: "10/07/2026",
             horaInicio: "08:00",
             horaFim: "09:00",
             profissionalId: 1,
@@ -24,6 +24,7 @@ export class HorariosService {
         },
         {
             id: 2,
+            data: "10/08/2026",
             horaInicio: "09:00",
             horaFim: "10:00",
             profissionalId: 2,
@@ -31,6 +32,7 @@ export class HorariosService {
         },
         {
             id: 3,
+            data: "10/09/2026",
             horaInicio: "14:00",
             horaFim: "15:00",
             profissionalId: 3,
@@ -38,21 +40,53 @@ export class HorariosService {
         }
     ];
 
-    listarDisponiveis(profissionalId?: number) {
+    listarDisponiveis(profissionalId?: number, data?: string) {
         let filtrados = this.horarios.filter(f => f.status === 'disponivel');
 
         if (profissionalId) {
             filtrados = filtrados.filter(f => f.profissionalId === profissionalId);
         }
 
+        if (data) {
+            filtrados = filtrados.filter(f => f.data === data);
+        }
+
         return filtrados;
     }
 
     disponibilizarServico(createHorarioDto: CreateHorarioDto) {
-        this.validarIntervalo(createHorarioDto.horaInicio, createHorarioDto.horaFim);
+        const dataAtual = new Date();
+        dataAtual.setHours(0, 0, 0, 0);
+        const dataDigitada = new Date(createHorarioDto.data.split('/').reverse().join('-'));
+        dataDigitada.setHours(0, 0, 0, 0);
+
+        const horaInicioStr = createHorarioDto.horaInicio.split(':').join('');
+        const horaFimStr = createHorarioDto.horaFim.split(':').join('');
+
+        const horaInicio = Number(horaInicioStr);
+        const horaFim = Number(horaFimStr);
+
+        if (horaInicio >= horaFim) {
+            throw new BadRequestException('A hora de término deve ser posterior à hora de início.');
+        }
+
+        if (dataDigitada < dataAtual) {
+            throw new BadRequestException('A data do horário não pode ser anterior à data atual.');
+        }
+
+        const horarioDuplicado = this.horarios.find(h =>
+            h.profissionalId === createHorarioDto.profissionalId &&
+            h.data === createHorarioDto.data &&
+            h.horaInicio === createHorarioDto.horaInicio
+        );
+
+        if (horarioDuplicado) {
+            throw new BadRequestException('Este profissional já possui este horário cadastrado nesta mesma data.');
+        }
 
         const novoHorario: Horario = {
             id: this.horarios.length + 1,
+            data: createHorarioDto.data,
             profissionalId: createHorarioDto.profissionalId,
             horaInicio: createHorarioDto.horaInicio,
             horaFim: createHorarioDto.horaFim,
@@ -64,42 +98,50 @@ export class HorariosService {
     }
 
     deletarServico(id: number) {
-        let horario = this.horarios.find(h => h.id === id);
-
-        if (!horario) {
-            return 'Horário não encontrado.';
-        }
-
-        if (horario.status == 'disponivel') {
-            throw new BadRequestException('Não é possível deletar um horário que está disponível.');
-        }
-
-        horario.status = 'disponivel';
-        return 'Horário deletado com sucesso.';
-    }
-
-    atualizarStatus(id: number, updateHorarioDto: UpdateHorarioDto) {
         const horario = this.horarios.find(h => h.id === id);
 
         if (!horario) {
-            throw new NotFoundException('Horário com ID ${id} não encontrado.');
+            throw new NotFoundException(`Horário com ID ${id} não encontrado.`);
         }
 
-        const horaInicio = updateHorarioDto.horaInicio ?? horario.horaInicio;
-        const horaFim = updateHorarioDto.horaFim ?? horario.horaFim;
+        horario.status = 'indisponivel';
+        return 'Horário marcado como indisponível com sucesso.';
+    }
 
-        this.validarIntervalo(horaInicio, horaFim);
+    atualizarStatus(id: number, updateHorarioDto: UpdateHorarioDto) {
+        const horarioAtual = this.horarios.find(h => h.id === id);
 
-        const camposAtualizados = Object.entries(updateHorarioDto).reduce((acc, [key, value]) => {
-            if (value !== undefined) {
-                acc[key as keyof UpdateHorarioDto] = value;
+        if (!horarioAtual) {
+            throw new NotFoundException(`Horário com ID ${id} não encontrado.`);
+        }
+
+        if (updateHorarioDto.data) {
+            const dataAtual = new Date();
+            dataAtual.setHours(0, 0, 0, 0);
+            const dataDigitada = new Date(updateHorarioDto.data.split('/').reverse().join('-'));
+            dataDigitada.setHours(0, 0, 0, 0);
+
+            if (dataDigitada < dataAtual) {
+                throw new BadRequestException('A data do horário não pode ser anterior à data atual.');
             }
-            return acc;
-        }, {} as Partial<UpdateHorarioDto>);
+        }
 
-        const horarioAtualizado: Horario = { ...horario, ...camposAtualizados };
+        const horaInicio = updateHorarioDto.horaInicio || horarioAtual.horaInicio;
+        const horaFim = updateHorarioDto.horaFim || horarioAtual.horaFim;
 
-        this.horarios = this.horarios.map((h) => h.id === id ? horarioAtualizado : h);
+        const horaInicioNum = Number(horaInicio.split(':').join(''));
+        const horaFimNum = Number(horaFim.split(':').join(''));
+
+        if (horaInicioNum >= horaFimNum) {
+            throw new BadRequestException('A hora de término deve ser posterior à hora de início.');
+        }
+
+        const dadosFiltrados = Object.fromEntries(
+            Object.entries(updateHorarioDto).filter(([_, v]) => v !== undefined && v !== null && v !== "")
+        );
+
+        const horarioAtualizado: Horario = { ...horarioAtual, ...dadosFiltrados } as Horario;
+        this.horarios = this.horarios.map(h => h.id === id ? horarioAtualizado : h);
 
         return horarioAtualizado;
     }

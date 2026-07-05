@@ -1,9 +1,11 @@
-import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsIn } from 'class-validator';
 
-export class UpdateServiceDto  {
-    @IsString()
+export class UpdateServiceDto {
+    @IsIn(
+        ['Atendimento Médico', 'Atendimento Psicológico', 'Atendimento Odontológico', 'Atendimento de Enfermagem'],
+        { message: 'O nome do serviço deve ser: Atendimento Médico, Psicológico, Odontológico ou de Enfermagem.' })
     @IsOptional()
-    nome?: string;
+    nome?: 'Atendimento Médico' | 'Atendimento Psicológico' | 'Atendimento Odontológico' | 'Atendimento de Enfermagem';
 
     @IsString()
     @IsOptional()

@@ -8,24 +8,25 @@ export class HorariosController {
   constructor(private readonly horariosService: HorariosService) { }
 
   @Get('disponiveis')
-    listarDisponiveis(
-    @Query('profissionalId', new ParseIntPipe({ optional: true })) profissionalId?: number
+  listarDisponiveis(
+    @Query('profissionalId', new ParseIntPipe({ optional: true })) profissionalId?: number,
+    @Query('data') data?: string,
   ) {
-    return this.horariosService.listarDisponiveis(profissionalId);
+    return this.horariosService.listarDisponiveis(profissionalId, data);
   }
 
   @Post('disponibilizar')
-    disponibilizarServico(@Body() createHorarioDto: CreateHorarioDto) {
+  disponibilizarServico(@Body() createHorarioDto: CreateHorarioDto) {
     return this.horariosService.disponibilizarServico(createHorarioDto);
   }
 
   @Delete(':id')
-    deletarServico(@Param('id', ParseIntPipe) id: number) {
+  deletarServico(@Param('id', ParseIntPipe) id: number) {
     return this.horariosService.deletarServico(id);
   }
 
   @Patch(':id')
-    atualizarStatus(
+  atualizarStatus(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateHorarioDto: UpdateHorarioDto,
   ) {
