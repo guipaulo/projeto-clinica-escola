@@ -5,6 +5,8 @@ import { AutenticacaoService } from './autenticacao.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import type { UsuarioSemSenha } from '../usuarios/usuarios.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from './guards/roles.guard';
 
 type UsuarioAutenticado = UsuarioSemSenha;
 
@@ -35,11 +37,12 @@ export class AutenticacaoController {
     return this.authService.login(request.user);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Get('perfil')
   perfil(@Req() request: RequisicaoComUsuario) {
     return {
-      mensagem: 'Token válido',
+      mensagem: 'Bem-vindo administrador!',
       usuario: request.user,
     };
   }

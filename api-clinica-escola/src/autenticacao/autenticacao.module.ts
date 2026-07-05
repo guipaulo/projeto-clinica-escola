@@ -9,6 +9,7 @@ import { AutenticacaoService } from './autenticacao.service';
 
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [PassportModule,UsuariosModule,
@@ -26,6 +27,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     AutenticacaoService,
     LocalStrategy,
     JwtStrategy,
+    RolesGuard,
   ],
 })
 export class AutenticacaoModule {}
