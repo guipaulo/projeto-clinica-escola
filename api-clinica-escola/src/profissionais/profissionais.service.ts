@@ -10,8 +10,8 @@ type Profissional = {
   phone: string;
   registryCard: string;
   specialty: string;
-  servicesIds: number[]; // Atualizado para inglês
-  ativo?: boolean; 
+  servicesIds: number[];
+  ativo?: boolean;
 };
 
 // Serviço para gerenciar os profissionais na clínica-escola, incluindo operações de CRUD
@@ -20,7 +20,8 @@ export class ProfissionaisService {
   // 2. Atualização dos dados em memória para o formato com filtro
   private profissionais: Profissional[] = [
     { id: 1, name: 'Dra. Ana', email: 'ana@email.com', phone: '1199999999', registryCard: 'CRM123', specialty: 'fisioterapia', servicesIds: [1, 2], ativo: true },
-    { id: 2, name: 'Dr. Carlos', email: 'carlos@email.com', phone: '1188888888', registryCard: 'CRM456', specialty: 'medicina geral', servicesIds: [3], ativo: true },
+    { id: 2, name: 'Dr. Carlos', email: 'carlos@email.com', phone: '1188888888', registryCard: 'CRM456', specialty: 'pedagogia', servicesIds: [3], ativo: true },
+    { id: 3, name: 'Dra. Maria', email: 'maria@email.com', phone: '1177777777', registryCard: 'CRM789', specialty: 'psicologia', servicesIds: [4, 5], ativo: true },
   ];
 
   // Controlador para listar todos os profissionais, utilizando o serviço de profissionais
@@ -37,7 +38,7 @@ export class ProfissionaisService {
       }
 
       if (especialidade) {
-        // Mudámos p.especialidade para p.specialty!
+        // Mudamos p.especialidade para p.specialty!
         resultado = resultado.filter((p) =>
           p.specialty.toLowerCase().includes(especialidade.toLowerCase())
         );
@@ -63,7 +64,7 @@ export class ProfissionaisService {
     const nomeExiste = this.profissionais.find(
       (p) => p.name.toLowerCase() === dados.name.toLowerCase()
     );
-    
+
     if (nomeExiste) {
       throw new ConflictException('Já existe um profissional cadastrado com este nome na clínica.');
     }
@@ -77,13 +78,13 @@ export class ProfissionaisService {
     const { servicesIds, especialidade, ...restoDosDados } = dados as any;
 
     // 2. Monta o objeto traduzindo especialidade para specialty
-    const novoProfissional: Profissional = { 
+    const novoProfissional: Profissional = {
       id: novoId,
       servicesIds: servicesIds || [], // Se não vier nada, fica um array vazio
       specialty: especialidade,
-      ...restoDosDados 
+      ...restoDosDados
     };
-    
+
     this.profissionais.push(novoProfissional);
     return novoProfissional;
   }

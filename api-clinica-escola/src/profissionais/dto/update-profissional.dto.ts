@@ -26,4 +26,9 @@ export class UpdateProfissionalDto {
   @IsArray()
   @IsNumber({}, { each: true })
   servicesIds?: number[];
+  
+  // Adicionei a validação de string para o campo 'specialty' no DTO de atualização do profissional
+  @IsOptional()
+  @IsString()
+  specialty?: string;
 }
