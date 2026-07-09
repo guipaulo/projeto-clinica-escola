@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsuariosModule } from '../usuarios/usuarios.module';
 
 import { AutenticacaoController } from './autenticacao.controller';
@@ -12,12 +12,15 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { RolesGuard } from './guards/roles.guard';
 
 @Module({
-  imports: [PassportModule,UsuariosModule,
-    JwtModule.register({
-      secret: 'clinica-escola-jwt',
-      signOptions: {
-        expiresIn: '1h',
-      },
+  imports: [ConfigModule, PassportModule,UsuariosModule,
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: '1h',
+        },
+      }),
     }),
   ],
 

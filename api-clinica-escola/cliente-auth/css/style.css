@@ -8,24 +8,47 @@
 }
 
 :root{
-    --cor-primaria:#2563eb;
-    --cor-primaria-hover:#1d4ed8;
-    --cor-secundaria:#eff6ff;
-    --cor-texto:#1f2937;
-    --cor-input:#f8fafc;
-    --cor-borda:#d1d5db;
-    --cor-sucesso:#16a34a;
-    --cor-erro:#dc2626;
-    --sombra:0 15px 35px rgba(0,0,0,.15);
+    --cor-primaria:#7aa8f7;
+    --cor-primaria-hover:#6596ec;
+
+    --cor-secundaria:#eef6ff;
+
+    --cor-texto:#455468;
+
+    --cor-input:#f8fbff;
+
+    --cor-borda:#d9e4f5;
+
+    --cor-sucesso:#7bc89b;
+    --cor-sucesso-bg:#edf9f1;
+
+    --cor-erro:#d87f7f;
+    --cor-erro-bg:#fff2f2;
+
+    --sombra:0 15px 35px rgba(78,108,138,.15);
 }
+
+/* ===========================
+   BODY
+=========================== */
 
 body{
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg,#2563eb,#4f46e5,#7c3aed);
+
+    background: linear-gradient(
+        135deg,
+        #dfefff,
+        #edf5ff,
+        #f5f1ff,
+        #e7f8f4
+    );
+
     min-height:100vh;
+
     display:flex;
     justify-content:center;
     align-items:center;
+
     padding:20px;
 }
 
@@ -34,12 +57,18 @@ body{
 =========================== */
 
 main{
-    background:#fff;
+
+    background:#ffffff;
+
     width:100%;
     max-width:430px;
+
     padding:40px;
+
     border-radius:20px;
+
     box-shadow:var(--sombra);
+
     animation: aparecer .5s ease;
 }
 
@@ -48,10 +77,15 @@ main{
 =========================== */
 
 h1{
+
     text-align:center;
+
     color:var(--cor-texto);
+
     margin-bottom:35px;
+
     font-size:2rem;
+
     font-weight:700;
 }
 
@@ -60,20 +94,29 @@ h1{
 =========================== */
 
 form{
+
     display:flex;
+
     flex-direction:column;
+
     gap:20px;
 }
 
 form div{
+
     display:flex;
+
     flex-direction:column;
 }
 
 label{
+
     margin-bottom:8px;
+
     font-size:.95rem;
-    color:#4b5563;
+
+    color:#64748b;
+
     font-weight:600;
 }
 
@@ -82,19 +125,34 @@ label{
 =========================== */
 
 input{
+
     padding:14px 16px;
+
     border:2px solid var(--cor-borda);
+
     border-radius:10px;
+
     background:var(--cor-input);
+
     font-size:1rem;
+
     transition:.3s;
+
     outline:none;
 }
 
 input:focus{
+
     border-color:var(--cor-primaria);
-    background:#fff;
-    box-shadow:0 0 0 4px rgba(37,99,235,.15);
+
+    background:#ffffff;
+
+    box-shadow:0 0 0 4px rgba(122,168,247,.20);
+}
+
+input::placeholder{
+
+    color:#a0aec0;
 }
 
 /* ===========================
@@ -102,24 +160,37 @@ input:focus{
 =========================== */
 
 button{
+
     margin-top:10px;
+
     padding:15px;
+
     border:none;
+
     border-radius:10px;
+
     background:var(--cor-primaria);
-    color:#fff;
+
+    color:#ffffff;
+
     font-size:1rem;
+
     font-weight:bold;
+
     cursor:pointer;
+
     transition:.3s;
 }
 
 button:hover{
+
     background:var(--cor-primaria-hover);
+
     transform:translateY(-2px);
 }
 
 button:active{
+
     transform:scale(.98);
 }
 
@@ -128,50 +199,63 @@ button:active{
 =========================== */
 
 #saida{
-    display: none;
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 10px;
-    font-size: 15px;
-    text-align: center;
-    font-weight: 500;
+
+    display:none;
+
+    margin-top:20px;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    font-size:15px;
+
+    text-align:center;
+
+    font-weight:500;
 }
 
 #saida.sucesso{
-    display: block;
-    background: #dcfce7;
-    color: #166534;
-    border: 1px solid #22c55e;
+
+    display:block;
+
+    background:var(--cor-sucesso-bg);
+
+    color:var(--cor-sucesso);
+
+    border:1px solid #9eddb6;
 }
 
 #saida.erro{
-    display: block;
-    background: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #ef4444;
+
+    display:block;
+
+    background:var(--cor-erro-bg);
+
+    color:var(--cor-erro);
+
+    border:1px solid #efb4b4;
 }
 
-/* Scroll */
+/* ===========================
+   SCROLL
+=========================== */
 
 #saida::-webkit-scrollbar{
+
     width:8px;
 }
 
 #saida::-webkit-scrollbar-thumb{
-    background:#4b5563;
+
+    background:#94a3b8;
+
     border-radius:20px;
 }
 
 #saida::-webkit-scrollbar-track{
-    background:#1f2937;
-}
 
-/* ===========================
-   PLACEHOLDER
-=========================== */
-
-input::placeholder{
-    color:#9ca3af;
+    background:#e5edf8;
 }
 
 /* ===========================
@@ -179,13 +263,20 @@ input::placeholder{
 =========================== */
 
 @keyframes aparecer{
+
     from{
+
         opacity:0;
+
         transform:translateY(30px);
+
     }
 
     to{
+
         opacity:1;
+
         transform:translateY(0);
+
     }
 }

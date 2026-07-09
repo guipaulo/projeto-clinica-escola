@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Painel do Administrador</title>
+
+      <link rel="stylesheet" href="../css/global.css">
+      <link rel="stylesheet" href="../css/admin.css">
+
+  </head>
+
+  <body data-perfil="admin">
+
+    <h1>Painel do Administrador</h1>
+
+    <p id="usuario-logado"></p>
+
+    <button id="logout">Sair</button>
+
+    <hr>
+
+    <section>
+
+    <h2>Listar usuários</h2>
+
+    <button id="listarUsuarios">Listar usuários</button>
+
+    </section>
+
+    <section>
+
+    <h2>Cadastrar usuário</h2>
+
+    <form id="formCadastro">
+
+    <input
+    type="text"
+    name="nome"
+    placeholder="Nome"
+    required>
+
+    <input
+    type="email"
+    name="email"
+    placeholder="Email"
+    required>
+
+    <input
+    type="password"
+    name="senha"
+    placeholder="Senha"
+    required>
+
+    <select name="perfil">
+
+    <option value="admin">Administrador</option>
+
+    <option value="profissional">Profissional</option>
+
+    <option value="aluno">Aluno</option>
+
+    </select>
+
+    <button type="submit">
+    Cadastrar
+    </button>
+
+    </form>
+
+    </section>
+
+    <section>
+
+    <h2>Atualizar usuário</h2>
+
+    <form id="formAtualizar">
+
+    <input
+    type="number"
+    name="id"
+    placeholder="ID"
+    required>
+
+    <input
+    type="text"
+    name="nome"
+    placeholder="Novo nome">
+
+    <input
+    type="email"
+    name="email"
+    placeholder="Novo email">
+
+    <input
+    type="password"
+    name="senha"
+    placeholder="Nova senha">
+
+    <select name="perfil">
+
+    <option value="">Não alterar</option>
+
+    <option value="admin">Administrador</option>
+
+    <option value="profissional">Profissional</option>
+
+    <option value="aluno">Aluno</option>
+
+    </select>
+
+    <button type="submit">
+    Atualizar
+    </button>
+
+    </form>
+
+    </section>
+
+    <section>
+
+    <h2>Inativar usuário</h2>
+
+    <form id="formInativar">
+
+    <input
+    type="number"
+    name="id"
+    placeholder="ID do usuário"
+    required>
+
+    <button type="submit">
+    Inativar
+    </button>
+
+    </form>
+
+    </section>
+
+    <section>
+
+    <h2>Resposta da API</h2>
+
+    <pre id="resultado"></pre>
+
+    </section>
+
+    <script src="js/auth.js"></script>
+    <script src="js/homeadm.js"></script>
+
+  </body>
+</html>

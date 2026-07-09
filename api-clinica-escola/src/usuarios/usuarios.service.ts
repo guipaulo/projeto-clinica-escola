@@ -1,6 +1,7 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CriarUsuarioDto } from './dto/criar-usuario.dto';
+import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 
 export type PerfilUsuario = 'admin' | 'aluno' | 'profissional';
 
@@ -48,7 +49,7 @@ export class UsuariosService {
     },
   ];
 
-  async criar(dados: CriarUsuarioDto) {
+  async criar(dados: CriarUsuarioDto): Promise<UsuarioSemSenha> {
     const usuarioExistente = this.buscarPorEmail(dados.email);
 
     if (usuarioExistente) {
@@ -72,7 +73,7 @@ export class UsuariosService {
     return this.removerSenha(novoUsuario);
   }
 
-  listar() {
+  listar(): UsuarioSemSenha[] {
     return this.usuarios.map(usuario =>
         this.removerSenha(usuario),
     );
@@ -82,9 +83,85 @@ export class UsuariosService {
     const emailNormalizado = email.trim().toLowerCase();
 
     return (
-      this.usuarios.find((usuario) => usuario.email === emailNormalizado) ??
-      null
+      this.usuarios.find(
+        (usuario) =>
+          usuario.email.trim().toLowerCase() === emailNormalizado,
+      ) ?? null
     );
+  }
+  
+  buscarPorId(id: number): UsuarioSemSenha {
+  const usuario = this.usuarios.find((usuario) => usuario.id === id);
+
+  if (!usuario) {
+    throw new NotFoundException('Usuário não encontrado.');
+  }
+
+  return this.removerSenha(usuario);
+  }
+
+  async atualizar(
+    id: number,
+    dados: UpdateUsuarioDto,
+  ): Promise<UsuarioSemSenha> {
+    const usuario = this.usuarios.find((u) => u.id === id);
+
+    if (!usuario) {
+      throw new NotFoundException('Usuário não encontrado.');
+    }
+
+    // Atualização do e-mail
+    if (dados.email) {
+      const emailNormalizado = dados.email.trim().toLowerCase();
+
+      const usuarioExistente = this.buscarPorEmail(emailNormalizado);
+
+      if (usuarioExistente && usuarioExistente.id !== id) {
+        throw new ConflictException(
+          'Já existe um usuário com este e-mail.',
+        );
+      }
+
+      usuario.email = emailNormalizado;
+    }
+
+    // Atualização do nome
+    if (dados.nome) {
+      usuario.nome = dados.nome;
+    }
+
+    // Atualização do perfil
+    if (dados.perfil) {
+      usuario.perfil = dados.perfil;
+    }
+
+    // Atualização do status
+    if (dados.ativo !== undefined) {
+      usuario.ativo = dados.ativo;
+    }
+
+    // Atualização da senha
+    if (dados.senha) {
+      usuario.senha = await bcrypt.hash(dados.senha, 10);
+    }
+
+    return this.removerSenha(usuario);
+  }
+
+  inativar(id: number): UsuarioSemSenha {
+    const usuario = this.usuarios.find((u) => u.id === id);
+
+    if (!usuario) {
+      throw new NotFoundException('Usuário não encontrado.');
+    }
+
+    if (!usuario.ativo) {
+      throw new ConflictException('O usuário já está inativo.');
+    }
+
+    usuario.ativo = false;
+
+    return this.removerSenha(usuario);
   }
 
   removerSenha(usuario: Usuario): UsuarioSemSenha {
