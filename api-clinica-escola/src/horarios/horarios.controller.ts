@@ -7,29 +7,34 @@ import { UpdateHorarioDto } from './dto/update-horario.dto';
 export class HorariosController {
   constructor(private readonly horariosService: HorariosService) { }
 
+  @Get(':id')
+  buscarPorId(@Param('id', ParseIntPipe) id: number) {
+    return this.horariosService.buscarPorId(id);
+  }
+
   @Get('disponiveis')
-  listarDisponiveis(
-    @Query('profissionalId', new ParseIntPipe({ optional: true })) profissionalId?: number,
+  listarHorariosDisponiveis(
+    @Query('servicoId', ParseIntPipe) servicoId?: number,
     @Query('data') data?: string,
   ) {
-    return this.horariosService.listarDisponiveis(profissionalId, data);
+    return this.horariosService.listarHorariosDisponiveis(servicoId, data);
   }
 
   @Post('disponibilizar')
-  disponibilizarServico(@Body() createHorarioDto: CreateHorarioDto) {
-    return this.horariosService.disponibilizarServico(createHorarioDto);
+  disponibilizarHorario(@Body() createHorarioDto: CreateHorarioDto) {
+    return this.horariosService.disponibilizarHorario(createHorarioDto);
   }
 
   @Delete(':id')
-  deletarServico(@Param('id', ParseIntPipe) id: number) {
-    return this.horariosService.deletarServico(id);
+  deletarHorario(@Param('id', ParseIntPipe) id: number) {
+    return this.horariosService.deletarHorario(id);
   }
 
   @Patch(':id')
-  atualizarStatus(
+  atualizarHorario(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateHorarioDto: UpdateHorarioDto,
   ) {
-    return this.horariosService.atualizarStatus(id, updateHorarioDto);
+    return this.horariosService.atualizarHorario(id, updateHorarioDto);
   }
 }

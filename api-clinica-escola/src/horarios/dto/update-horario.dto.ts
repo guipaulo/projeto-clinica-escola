@@ -15,9 +15,9 @@ export class UpdateHorarioDto {
         @IsOptional()
         horaFim?: string;
 
-        @IsNumber({}, { message: 'O ID do profissional deve ser um número válido.' })
+        @IsNumber({}, { message: 'O ID do serviço deve ser um número válido.' })
         @IsOptional()
-        profissionalId?: number;
+        servicoId?: number;
 
         @IsIn(['disponivel', 'indisponivel'], { message: 'O status deve ser "disponivel" ou "indisponivel"' })
         @IsOptional()

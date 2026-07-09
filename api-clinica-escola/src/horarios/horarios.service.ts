@@ -7,7 +7,7 @@ type Horario = {
     data: string,
     horaInicio: string,
     horaFim: string,
-    profissionalId: number,
+    servicoId: number,
     status: 'disponivel' | 'indisponivel',
 }
 
@@ -19,7 +19,7 @@ export class HorariosService {
             data: "10/07/2026",
             horaInicio: "08:00",
             horaFim: "09:00",
-            profissionalId: 1,
+            servicoId: 1,
             status: "disponivel"
         },
         {
@@ -27,7 +27,7 @@ export class HorariosService {
             data: "10/08/2026",
             horaInicio: "09:00",
             horaFim: "10:00",
-            profissionalId: 2,
+            servicoId: 2,
             status: "disponivel"
         },
         {
@@ -35,16 +35,24 @@ export class HorariosService {
             data: "10/09/2026",
             horaInicio: "14:00",
             horaFim: "15:00",
-            profissionalId: 3,
+            servicoId: 3,
             status: "disponivel"
         }
     ];
 
-    listarDisponiveis(profissionalId?: number, data?: string) {
+    buscarPorId(id: number) {
+        let horario = this.horarios.find(h => h.id === id);
+        if (!horario) {
+            throw new NotFoundException(`Horário com ID ${id} não encontrado.`);
+        }
+        return horario;
+    }
+
+    listarHorariosDisponiveis(profissionalId?: number, data?: string) {
         let filtrados = this.horarios.filter(f => f.status === 'disponivel');
 
         if (profissionalId) {
-            filtrados = filtrados.filter(f => f.profissionalId === profissionalId);
+            filtrados = filtrados.filter(f => f.servicoId === profissionalId);
         }
 
         if (data) {
@@ -54,17 +62,17 @@ export class HorariosService {
         return filtrados;
     }
 
-    disponibilizarServico(createHorarioDto: CreateHorarioDto) {
-        const dataAtual = new Date();
+    disponibilizarHorario(createHorarioDto: CreateHorarioDto) {
+        let dataAtual = new Date();
         dataAtual.setHours(0, 0, 0, 0);
-        const dataDigitada = new Date(createHorarioDto.data.split('/').reverse().join('-'));
+        let dataDigitada = new Date(createHorarioDto.data.split('/').reverse().join('-'));
         dataDigitada.setHours(0, 0, 0, 0);
 
-        const horaInicioStr = createHorarioDto.horaInicio.split(':').join('');
-        const horaFimStr = createHorarioDto.horaFim.split(':').join('');
+        let horaInicioStr = createHorarioDto.horaInicio.split(':').join('');
+        let horaFimStr = createHorarioDto.horaFim.split(':').join('');
 
-        const horaInicio = Number(horaInicioStr);
-        const horaFim = Number(horaFimStr);
+        let horaInicio = Number(horaInicioStr);
+        let horaFim = Number(horaFimStr);
 
         if (horaInicio >= horaFim) {
             throw new BadRequestException('A hora de término deve ser posterior à hora de início.');
@@ -74,8 +82,8 @@ export class HorariosService {
             throw new BadRequestException('A data do horário não pode ser anterior à data atual.');
         }
 
-        const horarioDuplicado = this.horarios.find(h =>
-            h.profissionalId === createHorarioDto.profissionalId &&
+        let horarioDuplicado = this.horarios.find(h =>
+            h.servicoId === createHorarioDto.servicoId &&
             h.data === createHorarioDto.data &&
             h.horaInicio === createHorarioDto.horaInicio
         );
@@ -87,7 +95,7 @@ export class HorariosService {
         const novoHorario: Horario = {
             id: this.horarios.length + 1,
             data: createHorarioDto.data,
-            profissionalId: createHorarioDto.profissionalId,
+            servicoId: createHorarioDto.servicoId,
             horaInicio: createHorarioDto.horaInicio,
             horaFim: createHorarioDto.horaFim,
             status: 'disponivel',
@@ -97,28 +105,28 @@ export class HorariosService {
         return novoHorario;
     }
 
-    deletarServico(id: number) {
-        const horario = this.horarios.find(h => h.id === id);
+    deletarHorario(id: number) {
+        let horario = this.buscarPorId(id);
 
         if (!horario) {
             throw new NotFoundException(`Horário com ID ${id} não encontrado.`);
         }
 
-        horario.status = 'indisponivel';
-        return 'Horário marcado como indisponível com sucesso.';
+        this.horarios = this.horarios.filter(h => h.id !== id);
+        return `Horário com ID ${id} deletado com sucesso.`;
     }
 
-    atualizarStatus(id: number, updateHorarioDto: UpdateHorarioDto) {
-        const horarioAtual = this.horarios.find(h => h.id === id);
+    atualizarHorario(id: number, updateHorarioDto: UpdateHorarioDto) {
+        let horarioAtual = this.buscarPorId(id);
 
         if (!horarioAtual) {
             throw new NotFoundException(`Horário com ID ${id} não encontrado.`);
         }
 
         if (updateHorarioDto.data) {
-            const dataAtual = new Date();
+            let dataAtual = new Date();
             dataAtual.setHours(0, 0, 0, 0);
-            const dataDigitada = new Date(updateHorarioDto.data.split('/').reverse().join('-'));
+            let dataDigitada = new Date(updateHorarioDto.data.split('/').reverse().join('-'));
             dataDigitada.setHours(0, 0, 0, 0);
 
             if (dataDigitada < dataAtual) {
@@ -126,21 +134,19 @@ export class HorariosService {
             }
         }
 
-        const horaInicio = updateHorarioDto.horaInicio || horarioAtual.horaInicio;
-        const horaFim = updateHorarioDto.horaFim || horarioAtual.horaFim;
+        let horaInicio = updateHorarioDto.horaInicio || horarioAtual.horaInicio;
+        let horaFim = updateHorarioDto.horaFim || horarioAtual.horaFim;
 
-        const horaInicioNum = Number(horaInicio.split(':').join(''));
-        const horaFimNum = Number(horaFim.split(':').join(''));
+        let horaInicioNum = Number(horaInicio.split(':').join(''));
+        let horaFimNum = Number(horaFim.split(':').join(''));
 
         if (horaInicioNum >= horaFimNum) {
             throw new BadRequestException('A hora de término deve ser posterior à hora de início.');
         }
 
-        const dadosFiltrados = Object.fromEntries(
-            Object.entries(updateHorarioDto).filter(([_, v]) => v !== undefined && v !== null && v !== "")
-        );
+        Object.entries(updateHorarioDto).filter(([_, v]) => v !== undefined && v !== null && v !== "")
 
-        const horarioAtualizado: Horario = { ...horarioAtual, ...dadosFiltrados } as Horario;
+        let horarioAtualizado: Horario = { ...horarioAtual, ...updateHorarioDto };
         this.horarios = this.horarios.map(h => h.id === id ? horarioAtualizado : h);
 
         return horarioAtualizado;
