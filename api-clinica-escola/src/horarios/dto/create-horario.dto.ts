@@ -15,7 +15,7 @@ export class CreateHorarioDto {
     @IsNotEmpty({ message: 'A hora de término é obrigatória.' })
     horaFim: string;
 
-    @IsNumber({}, { message: 'O ID do profissional deve ser um número válido.' })
-    @IsNotEmpty({ message: 'O profissional é obrigatório.' })
-    profissionalId: number;
+    @IsNumber({}, { message: 'O ID do serviço deve ser um número válido.' })
+    @IsNotEmpty({ message: 'O serviço é obrigatório.' })
+    servicoId: number;
 }

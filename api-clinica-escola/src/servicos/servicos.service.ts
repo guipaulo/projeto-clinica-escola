@@ -38,6 +38,14 @@ export class ServicosService {
         }
     ]
 
+    buscarPorId(id: number) {
+        let servico = this.servicos.find(s => s.id === id);
+        if (!servico) {
+            throw new NotFoundException(`Serviço com ID ${id} não encontrado.`);
+        }
+        return servico;
+    }
+
     listarServicos() {
         return this.servicos;
     }
@@ -56,11 +64,7 @@ export class ServicosService {
     }
 
     atualizarServico(id: number, updateServicoDto: UpdateServiceDto) {
-        const servico = this.servicos.find(s => s.id === id);
-
-        if (!servico) {
-            throw new NotFoundException('Serviço com ID ${id} não encontrado.');
-        }
+        const servico = this.buscarPorId(id);
 
         let UpdateServicoDto = Object.fromEntries(
             Object.entries(updateServicoDto).filter(([_, v]) => v !== undefined && v !== null && v !== "")
@@ -72,6 +76,12 @@ export class ServicosService {
     }
 
     deletarServico(id: number) {
+        let servico = this.buscarPorId(id);
+        
+        if (!servico) {
+            throw new NotFoundException(`Serviço com ID ${id} não encontrado.`);
+        }
+        
         this.servicos = this.servicos.filter(s => s.id !== id);
         return 'Serviço deletado com sucesso.';
     }
