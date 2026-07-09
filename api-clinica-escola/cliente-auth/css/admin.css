@@ -1,108 +1,709 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* =====================================
+   ADMIN PANEL
+   Sistema Administrativo ERP/Hospitalar
+===================================== */
+
+
+/* CONTAINER */
+
+.container {
+
+    width:95%;
+
+    max-width:1400px;
+
+    margin:auto;
+
 }
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f4f6f9;
-    color: #333;
-    padding: 40px;
-}
 
-h1 {
-    color: #0056b3;
-    margin-bottom: 10px;
-}
+/* =====================================
+   HEADER
+===================================== */
 
-p {
-    margin-bottom: 15px;
-}
 
-hr {
-    margin: 30px 0;
-}
+.topo {
 
-section {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 3px 8px rgba(0,0,0,.15);
-}
+    background:var(--card);
 
-h2 {
-    margin-bottom: 20px;
-    color: #004a99;
-}
+    padding:25px 30px;
 
-input,
-select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 12px;
+    border-radius:16px;
 
-    border: 1px solid #ccc;
-    border-radius: 6px;
-
-    font-size: 15px;
-}
-
-input:focus,
-select:focus {
-    outline: none;
-    border-color: #0066cc;
-}
-
-button {
-
-    background: #0066cc;
-    color: white;
-
-    border: none;
-    border-radius: 6px;
-
-    padding: 10px 18px;
-
-    cursor: pointer;
-
-    transition: .2s;
-}
-
-button:hover {
-    background: #004d99;
-}
-
-#logout{
-    background:#dc3545;
-    margin-bottom:20px;
-}
-
-#logout:hover{
-    background:#b02a37;
-}
-
-pre{
-    background:#1f2937;
-    color:#22c55e;
-
-    padding:20px;
-
-    border-radius:8px;
-
-    overflow:auto;
-
-    max-height:400px;
-}
-
-form{
     display:flex;
-    flex-direction:column;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:var(--sombra);
+
+    margin-bottom:25px;
+
 }
 
-#usuario-logado{
-    font-weight:bold;
-    color:#444;
-    margin-bottom:20px;
+
+.topo h1 {
+
+    color:#34507d;
+
+    font-size:28px;
+
+}
+
+
+
+#usuario-logado {
+
+    color:var(--cinza);
+
+    margin-top:8px;
+
+}
+
+
+
+/* =====================================
+   CARDS
+===================================== */
+
+
+.card {
+
+    animation:
+
+        aparecer .3s ease;
+
+}
+
+
+
+.card h2 {
+
+    color:#34507d;
+
+}
+
+
+
+/* =====================================
+   FORMULÁRIOS
+===================================== */
+
+
+.grid-2 {
+
+    display:grid;
+
+    grid-template-columns:
+
+        repeat(2,1fr);
+
+    gap:20px;
+
+}
+
+
+
+.grid-2 input,
+.grid-2 select {
+
+    margin-bottom:0;
+
+}
+
+
+
+.botoes-edicao {
+
+
+    display:flex;
+
+    gap:15px;
+
+    grid-column:
+
+        span 2;
+
+
+}
+
+
+
+/* =====================================
+   BOTÕES
+===================================== */
+
+
+.btn-principal {
+
+
+    background:
+
+        var(--azul);
+
+}
+
+
+
+.btn-principal:hover {
+
+
+    background:
+
+        var(--azul-hover);
+
+}
+
+
+
+.btn-secundario {
+
+
+    background:
+
+        var(--cinza);
+
+}
+
+
+
+.btn-sair {
+
+
+    background:
+
+        var(--vermelho);
+
+}
+
+
+
+.btn-sair:hover {
+
+
+    background:
+
+        #c45f5f;
+
+}
+
+
+
+/* =====================================
+   PESQUISA
+===================================== */
+
+
+.titulo-tabela {
+
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+
+
+}
+
+
+
+.acoes-superiores {
+
+
+    display:flex;
+
+    gap:15px;
+
+}
+
+
+
+#pesquisa {
+
+
+    width:320px;
+
+    margin-bottom:0;
+
+
+}
+
+
+
+/* =====================================
+   TABELA
+===================================== */
+
+
+.tabela {
+
+
+    overflow-x:auto;
+
+
+}
+
+
+
+table {
+
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+}
+
+
+
+thead {
+
+
+    background:
+
+        #34507d;
+
+    color:white;
+
+
+}
+
+
+
+th {
+
+
+    padding:15px;
+
+    text-align:left;
+
+}
+
+
+
+td {
+
+
+    padding:14px;
+
+    border-bottom:
+
+        1px solid var(--borda);
+
+}
+
+
+
+tbody tr:nth-child(even) {
+
+
+    background:
+
+        var(--cinza-claro);
+
+
+}
+
+
+
+tbody tr {
+
+
+    transition:.2s;
+
+
+}
+
+
+
+tbody tr:hover {
+
+
+    background:
+
+        #e7f0ff;
+
+
+}
+
+
+
+/* =====================================
+   BOTÕES DAS AÇÕES DA TABELA
+===================================== */
+
+
+.btn-editar {
+
+
+    background:
+
+        var(--azul);
+
+    color:white;
+
+
+}
+
+
+
+.btn-inativar {
+
+
+    background:
+
+        var(--vermelho);
+
+    color:white;
+
+
+}
+
+
+
+.btn-reativar {
+
+
+    background:
+
+        var(--verde);
+
+    color:white;
+
+
+}
+
+
+
+.btn-editar:hover {
+
+
+    background:
+
+        var(--azul-hover);
+
+
+}
+
+
+
+.btn-inativar:hover {
+
+
+    background:
+
+        #c45f5f;
+
+
+}
+
+
+
+.btn-reativar:hover {
+
+
+    background:
+
+        #55af7b;
+
+
+}
+
+
+
+/* =====================================
+   STATUS
+===================================== */
+
+
+.status {
+
+
+    padding:
+
+        6px 12px;
+
+
+    border-radius:
+
+        20px;
+
+
+    font-size:
+
+        13px;
+
+
+    font-weight:
+
+        bold;
+
+
+}
+
+
+
+.status-ativo {
+
+
+    background:
+
+        #d9f5e3;
+
+
+    color:
+
+        #176b3a;
+
+
+}
+
+
+
+.status-inativo {
+
+
+    background:
+
+        #fbe0e0;
+
+
+    color:
+
+        #8f3030;
+
+
+}
+
+
+
+/* =====================================
+   ALERTAS
+===================================== */
+
+
+.mensagem {
+
+
+    padding:
+
+        18px;
+
+
+    border-radius:
+
+        12px;
+
+
+    background:
+
+        #e7f0ff;
+
+
+    color:
+
+        #34507d;
+
+
+    border-left:
+
+        5px solid var(--azul);
+
+
+}
+
+
+
+.mensagem.sucesso {
+
+
+    background:
+
+        #d9f5e3;
+
+
+    color:
+
+        #176b3a;
+
+
+    border-color:
+
+        var(--verde);
+
+
+}
+
+
+
+.mensagem.erro {
+
+
+    background:
+
+        #fbe0e0;
+
+
+    color:
+
+        #8f3030;
+
+
+    border-color:
+
+        var(--vermelho);
+
+
+}
+
+
+
+/* =====================================
+   ANIMAÇÕES
+===================================== */
+
+
+@keyframes aparecer {
+
+
+    from {
+
+        opacity:0;
+
+        transform:
+
+            translateY(10px);
+
+    }
+
+
+    to {
+
+        opacity:1;
+
+        transform:
+
+            translateY(0);
+
+    }
+
+}
+
+
+
+/* =====================================
+   RESPONSIVO
+===================================== */
+
+
+@media(max-width:900px){
+
+
+    .grid-2 {
+
+
+        grid-template-columns:
+
+            1fr;
+
+
+    }
+
+
+
+    .botoes-edicao {
+
+
+        grid-column:
+
+            span 1;
+
+
+    }
+
+
+
+    .topo {
+
+
+        flex-direction:
+
+            column;
+
+
+        align-items:
+
+            flex-start;
+
+
+        gap:20px;
+
+
+    }
+
+
+
+    .acoes-superiores {
+
+
+        width:100%;
+
+        flex-direction:
+
+            column;
+
+
+    }
+
+
+
+    #pesquisa {
+
+
+        width:100%;
+
+
+    }
+
+
+}
+
+
+
+@media(max-width:500px){
+
+
+    body {
+
+        padding:20px;
+
+    }
+
+
+    .topo h1 {
+
+
+        font-size:22px;
+
+
+    }
+
+
+
+    section {
+
+
+        padding:20px;
+
+    }
+
+
 }

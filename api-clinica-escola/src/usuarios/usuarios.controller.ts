@@ -51,4 +51,13 @@ export class UsuariosController {
   ) {
     return this.usuariosService.inativar(id);
   }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Patch(':id/reativar')
+  reativar(
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.usuariosService.reativar(id);
+  }
 }

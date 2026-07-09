@@ -164,6 +164,22 @@ export class UsuariosService {
     return this.removerSenha(usuario);
   }
 
+  reativar(id: number): UsuarioSemSenha {
+    const usuario = this.usuarios.find((u) => u.id === id);
+
+    if (!usuario) {
+      throw new NotFoundException('Usuário não encontrado.');
+    } 
+
+    if (usuario.ativo) {
+      throw new ConflictException('O usuário já está ativo.');
+    }
+
+    usuario.ativo = true;
+
+    return this.removerSenha(usuario);
+  }
+
   removerSenha(usuario: Usuario): UsuarioSemSenha {
     const { senha, ...usuarioSemSenha } = usuario;
     return usuarioSemSenha;

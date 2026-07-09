@@ -1,152 +1,258 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Painel do Administrador</title>
 
-      <link rel="stylesheet" href="../css/global.css">
-      <link rel="stylesheet" href="../css/admin.css">
+<head>
 
-  </head>
+    <meta charset="UTF-8">
 
-  <body data-perfil="admin">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <h1>Painel do Administrador</h1>
+    <title>Painel do Administrador</title>
 
-    <p id="usuario-logado"></p>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/admin.css">
 
-    <button id="logout">Sair</button>
+</head>
 
-    <hr>
+<body data-perfil="admin">
 
-    <section>
+<div class="container">
 
-    <h2>Listar usuários</h2>
+    <!-- ========================= -->
+    <!-- Header -->
+    <!-- ========================= -->
 
-    <button id="listarUsuarios">Listar usuários</button>
+    <header class="topo">
 
-    </section>
+        <div>
 
-    <section>
+            <h1>Painel do Administrador</h1>
 
-    <h2>Cadastrar usuário</h2>
+            <p id="usuario-logado"></p>
 
-    <form id="formCadastro">
+        </div>
 
-    <input
-    type="text"
-    name="nome"
-    placeholder="Nome"
-    required>
+        <button id="logout" class="btn-sair">
 
-    <input
-    type="email"
-    name="email"
-    placeholder="Email"
-    required>
+            Sair
 
-    <input
-    type="password"
-    name="senha"
-    placeholder="Senha"
-    required>
+        </button>
 
-    <select name="perfil">
+    </header>
 
-    <option value="admin">Administrador</option>
+    <!-- ========================= -->
+    <!-- Cadastro -->
+    <!-- ========================= -->
 
-    <option value="profissional">Profissional</option>
+    <section class="card">
 
-    <option value="aluno">Aluno</option>
+        <h2>Cadastrar usuário</h2>
 
-    </select>
+        <form id="formCadastro" class="grid-2">
 
-    <button type="submit">
-    Cadastrar
-    </button>
+            <input
+                type="text"
+                name="nome"
+                placeholder="Nome"
+                required>
 
-    </form>
+            <input
+                type="email"
+                name="email"
+                placeholder="E-mail"
+                required>
 
-    </section>
+            <input
+                type="password"
+                name="senha"
+                placeholder="Senha"
+                required>
 
-    <section>
+            <select name="perfil">
 
-    <h2>Atualizar usuário</h2>
+                <option value="admin">Administrador</option>
 
-    <form id="formAtualizar">
+                <option value="profissional">Profissional</option>
 
-    <input
-    type="number"
-    name="id"
-    placeholder="ID"
-    required>
+                <option value="aluno">Aluno</option>
 
-    <input
-    type="text"
-    name="nome"
-    placeholder="Novo nome">
+            </select>
 
-    <input
-    type="email"
-    name="email"
-    placeholder="Novo email">
+            <button
+                class="btn-principal"
+                type="submit">
 
-    <input
-    type="password"
-    name="senha"
-    placeholder="Nova senha">
+                Cadastrar usuário
 
-    <select name="perfil">
+            </button>
 
-    <option value="">Não alterar</option>
-
-    <option value="admin">Administrador</option>
-
-    <option value="profissional">Profissional</option>
-
-    <option value="aluno">Aluno</option>
-
-    </select>
-
-    <button type="submit">
-    Atualizar
-    </button>
-
-    </form>
+        </form>
 
     </section>
 
-    <section>
+    <!-- ========================= -->
+    <!-- Gerenciamento -->
+    <!-- ========================= -->
 
-    <h2>Inativar usuário</h2>
+    <section class="card">
 
-    <form id="formInativar">
+        <div class="titulo-tabela">
 
-    <input
-    type="number"
-    name="id"
-    placeholder="ID do usuário"
-    required>
+            <h2>Usuários cadastrados</h2>
 
-    <button type="submit">
-    Inativar
-    </button>
+            <div class="acoes-superiores">
 
-    </form>
+                <input
+                    id="pesquisa"
+                    type="text"
+                    placeholder="Pesquisar usuário...">
+
+                <button
+                    id="listarUsuarios"
+                    class="btn-principal"
+                    type="button">
+
+                    Mostrar lista completa
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="tabela">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Nome</th>
+
+                        <th>E-mail</th>
+
+                        <th>Perfil</th>
+
+                        <th>Status</th>
+
+                        <th>Criado em</th>
+
+                        <th>Ações</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="corpoTabela">
+
+                </tbody>
+
+            </table>
+
+        </div>
 
     </section>
 
-    <section>
+    <!-- ========================= -->
+    <!-- Editar -->
+    <!-- ========================= -->
 
-    <h2>Resposta da API</h2>
+    <section
+        class="card"
+        id="cardEditar"
+        style="display:none;">
 
-    <pre id="resultado"></pre>
+        <h2>Editar usuário</h2>
+
+        <form id="formEditar" class="grid-2">
+
+            <input
+                type="hidden"
+                name="id">
+
+            <input
+                type="text"
+                name="nome"
+                placeholder="Nome">
+
+            <input
+                type="email"
+                name="email"
+                placeholder="E-mail">
+
+            <input
+                type="password"
+                name="senha"
+                placeholder="Nova senha (opcional)">
+
+            <select name="perfil">
+
+                <option value="admin">Administrador</option>
+
+                <option value="profissional">Profissional</option>
+
+                <option value="aluno">Aluno</option>
+
+            </select>
+
+            <select name="ativo">
+
+                <option value="true">Ativo</option>
+
+                <option value="false">Inativo</option>
+
+            </select>
+
+            <div class="botoes-edicao">
+
+                <button
+                    class="btn-principal"
+                    type="submit">
+
+                    Salvar alterações
+
+                </button>
+
+                <button
+                    id="cancelarEdicao"
+                    class="btn-secundario"
+                    type="button">
+
+                    Cancelar
+
+                </button>
+
+            </div>
+
+        </form>
 
     </section>
 
-    <script src="js/auth.js"></script>
-    <script src="js/homeadm.js"></script>
+    <!-- ========================= -->
+    <!-- Mensagens -->
+    <!-- ========================= -->
 
-  </body>
+    <section class="card">
+
+        <h2>Mensagens</h2>
+
+        <div id="resultado" class="mensagem">
+
+            Bem-vindo ao painel.
+
+        </div>
+
+    </section>
+
+</div>
+
+<script src="../js/auth.js"></script>
+<script src="../js/homeadm.js"></script>
+
+</body>
+
 </html>
