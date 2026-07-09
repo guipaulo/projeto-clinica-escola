@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { HorariosController } from './horarios.controller';
 import { HorariosService } from './horarios.service';
+import { HorariosController } from './horarios.controller';
 
 @Module({
   controllers: [HorariosController],
-  providers: [HorariosService]
+  providers: [HorariosService],
+  exports: [HorariosService],
 })
 export class HorariosModule {}
