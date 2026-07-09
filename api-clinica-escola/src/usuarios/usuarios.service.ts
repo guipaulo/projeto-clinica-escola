@@ -22,8 +22,8 @@ export class UsuariosService {
   private readonly usuarios: Usuario[] = [
     {
       id: 1,
-      nome: 'Ana Lima',
-      email: 'ana@example.com',
+      nome: 'Ingridy Candido',
+      email: 'ingridy@example.com',
       senha: '$2b$10$JAVhJpbIKv5pHfr1zyWKDOe0oEybwISbjlO4xGc0gH.XW0bR9ddvW',
       perfil: 'admin',
       ativo: true,
@@ -31,8 +31,8 @@ export class UsuariosService {
     },
     {
       id: 2,
-      nome: 'Bruno Costa',
-      email: 'bruno@example.com',
+      nome: 'Paulo Guilherme',
+      email: 'paulo@example.com',
       senha: '$2b$10$LiBQTNwuH4F7oIH9f7bfRuKW.e6YLQdZdMM7OlW7DZRDwJZUXEcvm',
       perfil: 'aluno',
       ativo: true,
@@ -40,11 +40,20 @@ export class UsuariosService {
     },
     {
       id: 3,
-      nome: 'Carla Souza',
-      email: 'carla@example.com',
+      nome: 'Jose Henrique',
+      email: 'jose@example.com',
       senha: '$2b$10$tBKc6RioCuqkza5dSNybcOe8QLIDq2PV6wZn7xjXSd64fM7SiNcWq',
       perfil: 'profissional',
       ativo: false,
+      criadoEm: new Date().toISOString(),
+    },
+    {
+      id: 4,
+      nome: 'Nicole Carvalho',
+      email: 'nicole@example.com',
+      senha: '$2b$10$JAVhJpbIKv5pHfr1zyWKDOe0oEybwISbjlO4xGc0gH.XW0bR9ddvW',
+      perfil: 'aluno',
+      ativo: true,
       criadoEm: new Date().toISOString(),
     },
   ];
