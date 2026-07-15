@@ -13,7 +13,7 @@ export class CreateServicoDto {
         'O nome do serviço deve ser: Atendimento Médico, Psicológico, Odontológico ou de Enfermagem.',
     },
   )
-  nome:
+  nome!:
     | 'Atendimento Médico'
     | 'Atendimento Psicológico'
     | 'Atendimento Odontológico'
@@ -25,5 +25,5 @@ export class CreateServicoDto {
 
   @IsNumber({}, { message: 'A duração deve ser um número.' })
   @Min(15, { message: 'A duração mínima do serviço deve ser de 15 minutos.' })
-  duracao: number;
+  duracao!: number;
 }

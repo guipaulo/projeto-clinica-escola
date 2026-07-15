@@ -1,4 +1,4 @@
-import { IsNumber, IsNotEmpty, Matches } from 'class-validator';
+import { IsNotEmpty, Matches } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateHorarioDto {

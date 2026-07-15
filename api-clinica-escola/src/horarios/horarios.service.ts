@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -80,13 +81,13 @@ export class HorariosService {
     const horaFim = Number(createHorarioDto.horaFim.replace(':', ''));
 
     if (horaInicio >= horaFim) {
-      throw new BadRequestException(
+      throw new ConflictException(
         'A hora de término deve ser posterior à hora de início.',
       );
     }
 
     if (dataDigitada < dataAtual) {
-      throw new BadRequestException(
+      throw new ConflictException(
         'A data do horário não pode ser anterior à data atual.',
       );
     }
@@ -99,7 +100,7 @@ export class HorariosService {
     );
 
     if (horarioDuplicado) {
-      throw new BadRequestException(
+      throw new ConflictException(
         'Este serviço já possui esse horário cadastrado nesta data.',
       );
     }
@@ -135,7 +136,7 @@ export class HorariosService {
       dataDigitada.setHours(0, 0, 0, 0);
 
       if (dataDigitada < dataAtual) {
-        throw new BadRequestException(
+        throw new ConflictException(
           'A data do horário não pode ser anterior à data atual.',
         );
       }
@@ -149,7 +150,7 @@ export class HorariosService {
     const horaFimNum = Number(horaFim.replace(':', ''));
 
     if (horaInicioNum >= horaFimNum) {
-      throw new BadRequestException(
+      throw new ConflictException(
         'A hora de término deve ser posterior à hora de início.',
       );
     }

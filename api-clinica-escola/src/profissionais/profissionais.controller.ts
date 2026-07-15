@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  HttpCode
 } from '@nestjs/common';
 import { CreateProfissionalDto } from './dto/create-profissional.dto';
 import { UpdateProfissionalDto } from './dto/update-profissional.dto';
@@ -48,6 +49,7 @@ export class ProfissionaisController {
 
   // Controlador para remover um profissional pelo ID, utilizando o serviço de profissionais
   @Delete(':id')
+  @HttpCode(204)
   remover(@Param('id', ParseIntPipe) id: number) {
     return this.profissionaisService.remover(id);
   }

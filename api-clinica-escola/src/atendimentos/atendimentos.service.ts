@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreateAtendimentoDto } from './dto/create-atendimento.dto';
 import { UpdateAtendimentoDto } from './dto/update-atendimento.dto';
+import { FiltroAtendimentoDto } from './dto/filtro-atendimento.dto';
 import { AlunosService } from '../alunos/alunos.service';
 import { ProfissionaisService } from '../profissionais/profissionais.service';
 import { HorariosService } from '../horarios/horarios.service';
@@ -29,9 +30,45 @@ export class AtendimentosService {
   ) {}
   private atendimentos: Atendimento[] = [];
 
-  listarAtendimentos() {
-    return this.atendimentos;
+  listarAtendimentos(filtros?: FiltroAtendimentoDto) {
+  let resultado = [...this.atendimentos];
+
+  if (!filtros) {
+    return resultado;
   }
+
+  if (filtros.alunoId !== undefined) {
+    resultado = resultado.filter(
+      (at) => at.alunoId === filtros.alunoId,
+    );
+  }
+
+  if (filtros.profissionalId !== undefined) {
+    resultado = resultado.filter(
+      (at) => at.profissionalId === filtros.profissionalId,
+    );
+  }
+
+  if (filtros.servicoId !== undefined) {
+    resultado = resultado.filter(
+      (at) => at.servicoId === filtros.servicoId,
+    );
+  }
+
+  if (filtros.horarioId !== undefined) {
+    resultado = resultado.filter(
+      (at) => at.horarioId === filtros.horarioId,
+    );
+  }
+
+  if (filtros.status) {
+    resultado = resultado.filter(
+      (at) => at.status === filtros.status,
+    );
+  }
+
+  return resultado;
+}
 
   buscarPorId(id: number) {
     const atendimento = this.atendimentos.find((at) => at.id === id);
@@ -105,13 +142,8 @@ export class AtendimentosService {
         'Um atendimento cancelado não pode ser alterado!',
       );
 
-    if (
-      atendimentoAtual.status === 'Agendado' &&
-      dados.especialidade !== undefined
-    )
-      throw new ConflictException(
-        'Não é permitido alterar a especialidade de um atendimento agendado!',
-      );
+    if (atendimentoAtual.status === 'Agendado' && dados.especialidade !== undefined)
+      throw new ConflictException('Não é permitido alterar a especialidade de um atendimento agendado!');
 
     const atendimentoAtualizado: Atendimento = {
       ...atendimentoAtual,
