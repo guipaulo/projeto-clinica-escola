@@ -24,8 +24,4 @@ export class FiltroAtendimentoDto {
   @IsOptional()
   @IsIn(['Agendado', 'Concluido', 'Cancelado'])
   status?: 'Agendado' | 'Concluido' | 'Cancelado';
-
-  @IsOptional()
-  @IsString()
-  data?: string;
 }
