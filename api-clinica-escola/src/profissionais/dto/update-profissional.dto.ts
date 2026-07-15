@@ -1,4 +1,10 @@
-import { IsEmail, IsOptional, IsString, IsArray, IsNumber } from 'class-validator';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  IsArray,
+  IsNumber,
+} from 'class-validator';
 
 // DTO para atualizar os dados de um profissional na clínica-escola
 export class UpdateProfissionalDto {
@@ -26,7 +32,7 @@ export class UpdateProfissionalDto {
   @IsArray()
   @IsNumber({}, { each: true })
   servicesIds?: number[];
-  
+
   // Adicionei a validação de string para o campo 'specialty' no DTO de atualização do profissional
   @IsOptional()
   @IsString()

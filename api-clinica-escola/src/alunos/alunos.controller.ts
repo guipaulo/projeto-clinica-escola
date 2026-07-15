@@ -16,26 +16,26 @@ import { AlunosService } from './alunos.service';
 @Controller('alunos')
 export class AlunosController {
   constructor(private readonly alunosService: AlunosService) {}
-  
-// Controlador para listar todos os alunos, utilizando o serviço de alunos
+
+  // Controlador para listar todos os alunos, utilizando o serviço de alunos
   @Get()
   listar() {
     return this.alunosService.listar();
   }
 
-// Controlador para buscar um aluno pelo ID, utilizando o serviço de alunos
+  // Controlador para buscar um aluno pelo ID, utilizando o serviço de alunos
   @Get(':id')
   buscarPorId(@Param('id', ParseIntPipe) id: number) {
     return this.alunosService.buscarPorId(id);
   }
 
-// Controlador para criar um novo aluno, utilizando o serviço de alunos
+  // Controlador para criar um novo aluno, utilizando o serviço de alunos
   @Post()
   criar(@Body() body: CreateAlunoDto) {
     return this.alunosService.criar(body);
   }
 
-// Controlador para atualizar parcialmente os dados de um aluno pelo ID, utilizando o serviço de alunos
+  // Controlador para atualizar parcialmente os dados de um aluno pelo ID, utilizando o serviço de alunos
   @Patch(':id')
   atualizarParcial(
     @Param('id', ParseIntPipe) id: number,
@@ -44,7 +44,7 @@ export class AlunosController {
     return this.alunosService.atualizarParcial(id, body);
   }
 
-// Controlador para remover um aluno pelo ID, utilizando o serviço de alunos
+  // Controlador para remover um aluno pelo ID, utilizando o serviço de alunos
   @Delete(':id')
   remover(@Param('id', ParseIntPipe) id: number) {
     return this.alunosService.remover(id);

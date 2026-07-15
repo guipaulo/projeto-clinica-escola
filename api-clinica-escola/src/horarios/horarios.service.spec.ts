@@ -37,11 +37,13 @@ describe('HorariosService', () => {
   });
 
   it('should reject a create with end time less than or equal to start time', () => {
-    expect(() => service.disponibilizarServico({
-      profissionalId: 1,
-      horaInicio: '09:00',
-      horaFim: '09:00',
-    })).toThrow('A hora de término deve ser posterior à hora de início.');
+    expect(() =>
+      service.disponibilizarServico({
+        profissionalId: 1,
+        horaInicio: '09:00',
+        horaFim: '09:00',
+      }),
+    ).toThrow('A hora de término deve ser posterior à hora de início.');
   });
 
   it('should reject an update with end time less than or equal to start time', () => {
@@ -51,9 +53,11 @@ describe('HorariosService', () => {
       horaFim: '09:00',
     });
 
-    expect(() => service.atualizarStatus(created.id, {
-      horaInicio: '10:00',
-      horaFim: '09:00',
-    })).toThrow('A hora de término deve ser posterior à hora de início.');
+    expect(() =>
+      service.atualizarStatus(created.id, {
+        horaInicio: '10:00',
+        horaFim: '09:00',
+      }),
+    ).toThrow('A hora de término deve ser posterior à hora de início.');
   });
 });

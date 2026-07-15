@@ -1,56 +1,33 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
-  ConflictException,
 } from '@nestjs/common';
 import { CreateAtendimentoDto } from './dto/create-atendimento.dto';
 import { UpdateAtendimentoDto } from './dto/update-atendimento.dto';
+import { AlunosService } from '../alunos/alunos.service';
+import { ProfissionaisService } from '../profissionais/profissionais.service';
+import { HorariosService } from '../horarios/horarios.service';
+import { ServicosService } from '../servicos/servicos.service';
 
 type Atendimento = {
   id: number;
-  aluno: string;
-  profissional: string;
-  especialidade: 'Medico' | 'Enfermeiro' | 'Psicologo' | 'Odontologista';
-  data: string;
+  alunoId: number;
+  profissionalId: number;
+  servicoId: number;
+  horarioId: number;
   status: 'Agendado' | 'Concluido' | 'Cancelado';
 };
 
 @Injectable()
 export class AtendimentosService {
-  private atendimentos: Atendimento[] = [
-    {
-      id: 1,
-      aluno: 'Paulo Guilherme',
-      profissional: 'Dra. Ana Beatriz',
-      especialidade: 'Medico',
-      data: '28/06/2026 08:30',
-      status: 'Agendado',
-    },
-    {
-      id: 2,
-      aluno: 'José Henrique',
-      profissional: 'Enf. Ana Célia',
-      especialidade: 'Enfermeiro',
-      data: '28/06/2026 09:15',
-      status: 'Agendado',
-    },
-    {
-      id: 3,
-      aluno: 'Carlos Eduardo',
-      profissional: 'Shirllane Nunes',
-      especialidade: 'Psicologo',
-      data: '28/06/2026 09:15',
-      status: 'Cancelado',
-    },
-    {
-      id: 4,
-      aluno: 'Ellen Mayara',
-      profissional: 'Dra. Carla Silva',
-      especialidade: 'Odontologista',
-      data: '28/06/2026 14:00',
-      status: 'Concluido',
-    },
-  ];
+  constructor(
+    private readonly alunosService: AlunosService,
+    private readonly profissionaisService: ProfissionaisService,
+    private readonly horariosService: HorariosService,
+    private readonly servicosService: ServicosService,
+  ) {}
+  private atendimentos: Atendimento[] = [];
 
   listarAtendimentos() {
     return this.atendimentos;
@@ -66,6 +43,37 @@ export class AtendimentosService {
   }
 
   criarAtendimento(dados: CreateAtendimentoDto) {
+    const aluno = this.alunosService.buscarPorId(dados.alunoId);
+
+    const profissional = this.profissionaisService.buscarPorId(
+      dados.profissionalId,
+    );
+
+    const horario = this.horariosService.buscarPorId(dados.horarioId);
+    const servico = this.servicosService.buscarPorId(dados.servicoId);
+
+    if (!aluno.ativo) {
+      throw new ConflictException(
+        'Não é possível agendar atendimento para um aluno inativo.',
+      );
+    }
+
+    if (profissional.ativo === false) {
+      throw new ConflictException(
+        'Não é possível agendar atendimento com um profissional inativo.',
+      );
+    }
+
+    if (horario.status !== 'disponivel') {
+      throw new ConflictException('O horário informado não está disponível.');
+    }
+
+    if (!profissional.servicesIds.includes(servico.id)) {
+      throw new ConflictException(
+        'O profissional informado não realiza o serviço informado.',
+      );
+    }
+
     const novoId =
       this.atendimentos.length > 0
         ? Math.max(...this.atendimentos.map((at) => at.id)) + 1
@@ -73,12 +81,16 @@ export class AtendimentosService {
 
     const novoAtendimento: Atendimento = {
       id: novoId,
-      aluno: dados.aluno,
-      profissional: dados.profissional,
-      especialidade: dados.especialidade,
-      data: new Date().toLocaleString('pt-BR'),
+      alunoId: dados.alunoId,
+      profissionalId: dados.profissionalId,
+      servicoId: dados.servicoId,
+      horarioId: dados.horarioId,
       status: 'Agendado',
     };
+
+    this.horariosService.atualizarHorario(horario.id, {
+      status: 'indisponivel',
+    });
 
     this.atendimentos.push(novoAtendimento);
 
@@ -119,5 +131,6 @@ export class AtendimentosService {
     if (!existe) throw new NotFoundException('Atendimento não encontrado');
 
     this.atendimentos = this.atendimentos.filter((at) => at.id !== id);
+    return { mensagem: `Atendimento ${id} removido com sucesso` };
   }
 }

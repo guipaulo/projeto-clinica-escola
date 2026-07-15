@@ -44,8 +44,8 @@ describe('ServicosService', () => {
 
     const updated = service.atualizarServico(created.id, {
       nome: 'Consulta Especial',
-      descricao: undefined as never,
-      duracao: undefined as never,
+      descricao: undefined,
+      duracao: undefined,
     });
 
     expect(updated.nome).toBe('Consulta Especial');

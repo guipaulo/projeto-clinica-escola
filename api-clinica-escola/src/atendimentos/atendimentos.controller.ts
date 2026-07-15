@@ -43,6 +43,6 @@ export class AtendimentosController {
   @Delete(':id')
   @HttpCode(204)
   remover(@Param('id', ParseIntPipe) id: number) {
-    this.atendimentosService.removerAtendimento(id);
+    return this.atendimentosService.removerAtendimento(id);
   }
 }
