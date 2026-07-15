@@ -24,10 +24,7 @@ export class HorariosController {
   }
 
   @Get('disponiveis')
-  listarHorariosDisponiveis(
-    @Query('servicoId', ParseIntPipe) servicoId?: number,
-    @Query('data') data?: string,
-  ) {
+  listarHorariosDisponiveis(@Query('data') data?: string,) {
     return this.horariosService.listarHorariosDisponiveis(data);
   }
 
