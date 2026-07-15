@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  HttpCode
 } from '@nestjs/common';
 import { CreateAlunoDto } from './dto/create-aluno.dto';
 import { UpdateAlunoDto } from './dto/update-aluno.dto';
@@ -46,6 +47,7 @@ export class AlunosController {
 
   // Controlador para remover um aluno pelo ID, utilizando o serviço de alunos
   @Delete(':id')
+  @HttpCode(204)
   remover(@Param('id', ParseIntPipe) id: number) {
     return this.alunosService.remover(id);
   }

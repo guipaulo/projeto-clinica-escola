@@ -5,10 +5,10 @@ import { UpdateServiceDto } from './dto/update-servico.dto';
 type Servico = {
   id: number;
   nome:
-    | 'Atendimento Médico'
-    | 'Atendimento Psicológico'
-    | 'Atendimento Odontológico'
-    | 'Atendimento de Enfermagem';
+  | 'Atendimento Médico'
+  | 'Atendimento Psicológico'
+  | 'Atendimento Odontológico'
+  | 'Atendimento de Enfermagem';
   descricao?: string;
   duracao: number;
 };
@@ -46,16 +46,16 @@ export class ServicosService {
     },
   ];
 
+  listarServicos() {
+    return this.servicos;
+  }
+
   buscarPorId(id: number) {
     const servico = this.servicos.find((s) => s.id === id);
     if (!servico) {
       throw new NotFoundException(`Serviço com ID ${id} não encontrado.`);
     }
     return servico;
-  }
-
-  listarServicos() {
-    return this.servicos;
   }
 
   cadastrarServico(createServicoDto: CreateServicoDto) {
