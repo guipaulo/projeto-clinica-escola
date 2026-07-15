@@ -30,5 +30,5 @@ export class CreateProfissionalDto {
 
   @IsString()
   @IsNotEmpty({ message: 'A especialidade é obrigatória.' })
-  especialidade!: string;
+  specialty!: string;
 }

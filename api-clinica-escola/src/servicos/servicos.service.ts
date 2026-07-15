@@ -75,7 +75,7 @@ export class ServicosService {
 
     const UpdateServicoDto = Object.fromEntries(
       Object.entries(updateServicoDto).filter(
-        ([_, v]) => v !== undefined && v !== null && v !== '',
+        ([v]) => v !== undefined && v !== null && v !== '',
       ),
     );
 

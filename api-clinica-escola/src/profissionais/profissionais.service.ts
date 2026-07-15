@@ -6,6 +6,7 @@ import {
 import { CreateProfissionalDto } from './dto/create-profissional.dto';
 import { UpdateProfissionalDto } from './dto/update-profissional.dto';
 import { FiltroProfissionalDto } from './dto/filtro-profissional.dto';
+import { ServicosService } from '../servicos/servicos.service';
 type Profissional = {
   id: number;
   name: string;
@@ -19,35 +20,48 @@ type Profissional = {
 
 @Injectable()
 export class ProfissionaisService {
+  constructor(
+    private readonly servicosService: ServicosService,
+  ) { }
   private profissionais: Profissional[] = [
     {
       id: 1,
-      name: 'Dra. Ana',
+      name: 'Dra. Ana Costa',
       email: 'ana@email.com',
       phone: '1199999999',
-      registryCard: 'CRM123',
-      specialty: 'fisioterapia',
-      servicesIds: [1, 2],
+      registryCard: 'COREN123',
+      specialty: 'Enfermagem',
+      servicesIds: [4],
       ativo: true,
     },
     {
       id: 2,
-      name: 'Dr. Carlos',
+      name: 'Dr. Carlos Azevedo',
       email: 'carlos@email.com',
       phone: '1188888888',
-      registryCard: 'CRM456',
-      specialty: 'pedagogia',
-      servicesIds: [3],
+      registryCard: 'CRP456',
+      specialty: 'Psicologia',
+      servicesIds: [2],
       ativo: true,
     },
     {
       id: 3,
-      name: 'Dra. Maria',
-      email: 'maria@email.com',
+      name: 'Dra. Maria Chaves',
+      email: 'mariachaves@email.com',
       phone: '1177777777',
       registryCard: 'CRM789',
-      specialty: 'psicologia',
-      servicesIds: [4, 5],
+      specialty: 'Medicina',
+      servicesIds: [1],
+      ativo: true,
+    },
+    {
+      id: 4,
+      name: 'Dr. Daniel Silva',
+      email: 'danielsilva@email.com',
+      phone: '11999999999',
+      registryCard: 'CRO573',
+      specialty: 'Odontologia',
+      servicesIds: [3],
       ativo: true,
     },
   ];
@@ -85,37 +99,55 @@ export class ProfissionaisService {
   }
 
   criar(dados: CreateProfissionalDto) {
-    const nomeExiste = this.profissionais.find(
-      (p) => p.name.toLowerCase() === dados.name.toLowerCase(),
+    const registroExiste = this.profissionais.find(
+      (p) => p.registryCard.toLowerCase() === dados.registryCard.toLowerCase(),
     );
 
-    if (nomeExiste) {
+    if (registroExiste) {
       throw new ConflictException(
-        'Já existe um profissional cadastrado com este nome na clínica.',
+        'Já existe um profissional cadastrado com este registro profissional na clínica.',
       );
     }
+
+    const servicesIds = dados.servicesIds ?? [];
+
+    const servicos = servicesIds.map((id) =>
+      this.servicosService.buscarPorId(id),
+    );
 
     const novoId =
       this.profissionais.length > 0
         ? Math.max(...this.profissionais.map((p) => p.id)) + 1
         : 1;
 
-    const { servicesIds, especialidade, ...restoDosDados } = dados as any;
-
     const novoProfissional: Profissional = {
       id: novoId,
-      servicesIds: servicesIds || [],
-      specialty: especialidade,
-      ...restoDosDados,
+      name: dados.name,
+      email: dados.email,
+      phone: dados.phone,
+      registryCard: dados.registryCard,
+      specialty: dados.specialty,
+      servicesIds,
+      ativo: true,
     };
 
     this.profissionais.push(novoProfissional);
-    return novoProfissional;
+
+    return {
+      ...novoProfissional,
+      servicos,
+    };
   }
 
   atualizarParcial(id: number, dados: UpdateProfissionalDto) {
     const profissional = this.buscarPorId(id);
     const atualizado = { ...profissional, ...dados };
+
+    if (dados.servicesIds !== undefined) {
+      dados.servicesIds.forEach((servicoId) => {
+        this.servicosService.buscarPorId(servicoId);
+      });
+    }
 
     this.profissionais = this.profissionais.map((p) =>
       p.id === id ? atualizado : p,
