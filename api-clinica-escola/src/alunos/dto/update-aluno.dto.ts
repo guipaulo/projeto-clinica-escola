@@ -1,6 +1,6 @@
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
-  // DTO para atualizar os dados de um aluno na clínica-escola
+// DTO para atualizar os dados de um aluno na clínica-escola
 export class UpdateAlunoDto {
   @IsOptional()
   @IsString()
@@ -16,7 +16,7 @@ export class UpdateAlunoDto {
   @IsString()
   email?: string;
 
-// Adicionei a validação de boolean para o campo 'ativo' no DTO de atualização do aluno
+  // Adicionei a validação de boolean para o campo 'ativo' no DTO de atualização do aluno
   @IsOptional()
   @IsBoolean()
   ativo?: boolean;

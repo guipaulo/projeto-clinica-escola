@@ -14,7 +14,6 @@ import { UpdateProfissionalDto } from './dto/update-profissional.dto';
 import { FiltroProfissionalDto } from './dto/filtro-profissional.dto';
 import { ProfissionaisService } from './profissionais.service';
 
-
 // Controlador para gerenciar os endpoints relacionados aos profissionais na clínica-escola
 @Controller('profissionais')
 export class ProfissionaisController {

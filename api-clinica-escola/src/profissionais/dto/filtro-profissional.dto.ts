@@ -3,7 +3,7 @@ import { IsOptional, IsString } from 'class-validator';
 export class FiltroProfissionalDto {
   @IsOptional()
   @IsString()
-  nome?: string; // 
+  nome?: string; //
 
   @IsOptional()
   @IsString()

@@ -15,7 +15,13 @@ type Aluno = {
 @Injectable()
 export class AlunosService {
   private alunos: Aluno[] = [
-    { id: 1, nome: 'João Silva', telefone: '11999999999', email: 'joao@email.com', ativo: true },
+    {
+      id: 1,
+      nome: 'João Silva',
+      telefone: '11999999999',
+      email: 'joao@email.com',
+      ativo: true,
+    },
     { id: 2, nome: 'Maria Souza', telefone: '11888888888', ativo: true },
   ];
 

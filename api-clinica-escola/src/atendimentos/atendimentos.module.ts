@@ -7,13 +7,8 @@ import { HorariosModule } from '../horarios/horarios.module';
 import { ServicosModule } from '../servicos/servicos.module';
 
 @Module({
-  imports: [
-    AlunosModule,
-    ProfissionaisModule,
-    HorariosModule,
-    ServicosModule,
-  ],
+  imports: [AlunosModule, ProfissionaisModule, HorariosModule, ServicosModule],
   controllers: [AtendimentosController],
   providers: [AtendimentosService],
 })
-export class AtendimentosModule { }
+export class AtendimentosModule {}

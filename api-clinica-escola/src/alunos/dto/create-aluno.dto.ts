@@ -14,8 +14,8 @@ export class CreateAlunoDto {
   @IsOptional()
   @IsString()
   email?: string;
-  
-// Adicionei o campo 'ativo' para indicar se o aluno está ativo ou não na clínica-escola
+
+  // Adicionei o campo 'ativo' para indicar se o aluno está ativo ou não na clínica-escola
   @IsBoolean()
   ativo!: boolean;
 }
