@@ -8,18 +8,22 @@ import {
   ParseIntPipe,
   Delete,
   HttpCode,
+  Query
 } from '@nestjs/common';
 import { AtendimentosService } from './atendimentos.service';
 import { CreateAtendimentoDto } from './dto/create-atendimento.dto';
 import { UpdateAtendimentoDto } from './dto/update-atendimento.dto';
+import { FiltroAtendimentoDto } from './dto/filtro-atendimento.dto';
 
 @Controller('atendimentos')
 export class AtendimentosController {
-  constructor(private readonly atendimentosService: AtendimentosService) {}
+  constructor(private readonly atendimentosService: AtendimentosService) { }
 
   @Get()
-  listar() {
-    return this.atendimentosService.listarAtendimentos();
+  listar(
+    @Query() filtros: FiltroAtendimentoDto,
+  ) {
+    return this.atendimentosService.listarAtendimentos(filtros);
   }
 
   @Get(':id')

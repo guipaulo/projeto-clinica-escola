@@ -22,7 +22,11 @@ export class AlunosService {
       email: 'joao@email.com',
       ativo: true,
     },
-    { id: 2, nome: 'Maria Souza', telefone: '11888888888', ativo: true },
+    { id: 2, 
+      nome: 'Maria Souza', 
+      telefone: '11888888888', 
+      ativo: true
+    },
   ];
 
   listar() {
