@@ -1,14 +1,41 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/global.css">
-    <title>Home</title>
-  </head>
-  <body>
-    <h1>Bem-vindo à Clínica Escola aluno</h1>
-    <p>Esta é a página inicial do sistema de agenda de atendimentos para uma clínica-escola.</p>
-    <script src="../js/auth.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>Área do Aluno</title>
+</head>
+
+<body>
+
+<h2>Área do Aluno</h2>
+
+<p id="usuario-logado"></p>
+<button id="logout">Sair</button>
+
+<hr>
+
+<h3>Meus Dados</h3>
+<div id="dadosAluno"></div>
+
+<hr>
+
+<h3>Agendar Atendimento</h3>
+
+<select id="servico"></select>
+<select id="horario"></select>
+
+<input type="number" id="profissionalId" placeholder="ID do Profissional">
+
+<button onclick="agendar()">Agendar</button>
+
+<p id="msg"></p>
+
+<hr>
+
+<h3>Meus Atendimentos</h3>
+<ul id="listaAtendimentos"></ul>
+
+<script src="homealuno.js"></script>
+
+</body>
 </html>

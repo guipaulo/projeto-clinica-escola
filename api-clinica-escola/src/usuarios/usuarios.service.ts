@@ -35,8 +35,7 @@ export class UsuariosService {
       id: 1,
       nome: 'Ingridy Candido',
       email: 'ingridy@example.com',
-      senha:
-        '$2b$10$JAVhJpbIKv5pHfr1zyWKDOe0oEybwISbjlO4xGc0gH.XW0bR9ddvW',
+      senha: '$2b$10$h.7yNmydl0sm0tFB/GolqOF7ceWlL0fKa6WCJE2x0xfMaKiCASoju',
       perfil: 'admin',
       ativo: true,
       criadoEm: new Date().toISOString(),
@@ -45,8 +44,7 @@ export class UsuariosService {
       id: 2,
       nome: 'Paulo Guilherme',
       email: 'paulo@example.com',
-      senha:
-        '$2b$10$LiBQTNwuH4F7oIH9f7bfRuKW.e6YLQdZdMM7OlW7DZRDwJZUXEcvm',
+      senha:'$2b$10$.1mI3W1j1JiOUzp.pvtML.5te2sxucAdObCz5IqnGPYP.usHzdZOC',
       perfil: 'aluno',
       ativo: true,
       criadoEm: new Date().toISOString(),
@@ -55,8 +53,7 @@ export class UsuariosService {
       id: 3,
       nome: 'Jose Henrique',
       email: 'jose@example.com',
-      senha:
-        '$2b$10$tBKc6RioCuqkza5dSNybcOe8QLIDq2PV6wZn7xjXSd64fM7SiNcWq',
+      senha:'$2b$10$k0iKp0iVFuSwIXysfzwkTeDGahJLW1lVIsXllvgbpWT/Uy9BXZxkG',
       perfil: 'profissional',
       ativo: false,
       criadoEm: new Date().toISOString(),
@@ -65,8 +62,7 @@ export class UsuariosService {
       id: 4,
       nome: 'Nicole Carvalho',
       email: 'nicole@example.com',
-      senha:
-        '$2b$10$JAVhJpbIKv5pHfr1zyWKDOe0oEybwISbjlO4xGc0gH.XW0bR9ddvW',
+      senha:'$2b$10$JAVhJpbIKv5pHfr1zyWKDOe0oEybwISbjlO4xGc0gH.XW0bR9ddvW',
       perfil: 'aluno',
       ativo: true,
       criadoEm: new Date().toISOString(),

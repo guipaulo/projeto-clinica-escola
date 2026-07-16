@@ -1,8 +1,24 @@
-const token = localStorage.getItem('token');
-const usuario = JSON.parse(localStorage.getItem('usuario'));
+export function getAuthHeaders() {
+  const token = localStorage.getItem('token');
 
-const perfilEsperado = document.body.dataset.perfil;
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+}
 
-if (!token || !usuario || usuario.perfil !== perfilEsperado) {
+export function verificarAcesso(perfilEsperado) {
+  const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+  if (!usuario || usuario.perfil !== perfilEsperado) {
+    alert('Acesso negado!');
+    window.location.href = 'index.html';
+  }
+
+  return usuario;
+}
+
+export function logout() {
+  localStorage.clear();
   window.location.href = 'index.html';
 }
