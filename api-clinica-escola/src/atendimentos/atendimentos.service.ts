@@ -52,44 +52,75 @@ export class AtendimentosService {
   ];
 
   listarAtendimentos(filtros?: FiltroAtendimentoDto) {
-  let resultado = [...this.atendimentos];
+    let resultado = [...this.atendimentos];
 
-  if (!filtros) {
-    return resultado;
+    if (filtros?.alunoId !== undefined) {
+      resultado = resultado.filter(
+        (atendimento) => atendimento.alunoId === filtros.alunoId,
+      );
+    }
+
+    if (filtros?.profissionalId !== undefined) {
+      resultado = resultado.filter(
+        (atendimento) =>
+          atendimento.profissionalId === filtros.profissionalId,
+      );
+    }
+
+    if (filtros?.servicoId !== undefined) {
+      resultado = resultado.filter(
+        (atendimento) => atendimento.servicoId === filtros.servicoId,
+      );
+    }
+
+    if (filtros?.horarioId !== undefined) {
+      resultado = resultado.filter(
+        (atendimento) => atendimento.horarioId === filtros.horarioId,
+      );
+    }
+
+    const resumo = {
+      agendados: resultado.filter(
+        (atendimento) => atendimento.status === 'Agendado',
+      ).length,
+      concluidos: resultado.filter(
+        (atendimento) => atendimento.status === 'Concluido',
+      ).length,
+      cancelados: resultado.filter(
+        (atendimento) => atendimento.status === 'Cancelado',
+      ).length,
+    };
+
+    if (filtros?.status) {
+      resultado = resultado.filter(
+        (atendimento) => atendimento.status === filtros.status,
+      );
+    }
+
+    resultado.sort((a, b) => b.id - a.id);
+
+    if (filtros?.pagina === undefined && filtros?.limite === undefined) {
+      return resultado;
+    }
+
+    const pagina = filtros.pagina ?? 1;
+    const limite = filtros.limite ?? 8;
+    const totalItens = resultado.length;
+    const totalPaginas = Math.max(1, Math.ceil(totalItens / limite));
+    const paginaValida = Math.min(pagina, totalPaginas);
+    const inicio = (paginaValida - 1) * limite;
+
+    return {
+      dados: resultado.slice(inicio, inicio + limite),
+      paginacao: {
+        pagina: paginaValida,
+        limite,
+        totalItens,
+        totalPaginas,
+      },
+      resumo,
+    };
   }
-
-  if (filtros.alunoId !== undefined) {
-    resultado = resultado.filter(
-      (at) => at.alunoId === filtros.alunoId,
-    );
-  }
-
-  if (filtros.profissionalId !== undefined) {
-    resultado = resultado.filter(
-      (at) => at.profissionalId === filtros.profissionalId,
-    );
-  }
-
-  if (filtros.servicoId !== undefined) {
-    resultado = resultado.filter(
-      (at) => at.servicoId === filtros.servicoId,
-    );
-  }
-
-  if (filtros.horarioId !== undefined) {
-    resultado = resultado.filter(
-      (at) => at.horarioId === filtros.horarioId,
-    );
-  }
-
-  if (filtros.status) {
-    resultado = resultado.filter(
-      (at) => at.status === filtros.status,
-    );
-  }
-
-  return resultado;
-}
 
   buscarPorId(id: number) {
     const atendimento = this.atendimentos.find((at) => at.id === id);

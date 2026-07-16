@@ -1,4 +1,4 @@
-const API = "http://localhost:3000";
+const API = `${window.location.protocol}//${window.location.hostname}:3000`;
 
 const elementos = {
   usuarioLogado: document.getElementById("usuario-logado"),
@@ -11,6 +11,7 @@ const elementos = {
   listaHorarios: document.getElementById("listaHorarios"),
   listaAtendimentos: document.getElementById("listaAtendimentos"),
   filtroStatus: document.getElementById("filtroStatus"),
+  itensPorPagina: document.getElementById("itensPorPagina"),
   paginacao: document.getElementById("paginacao"),
   paginaAnterior: document.getElementById("paginaAnterior"),
   proximaPagina: document.getElementById("proximaPagina"),
@@ -31,7 +32,9 @@ let servicos = [];
 let horarios = [];
 let atendimentos = [];
 let paginaAtual = 1;
-const ITENS_POR_PAGINA = 8;
+let itensPorPagina = 8;
+let totalPaginas = 1;
+let totalAtendimentos = 0;
 
 if (!usuario || !token || usuario.perfil !== "profissional") {
   localStorage.removeItem("token");
@@ -51,6 +54,7 @@ function getHeaders() {
 async function requisicao(caminho, opcoes = {}) {
   const resposta = await fetch(`${API}${caminho}`, {
     ...opcoes,
+    credentials: "include",
     headers: { ...getHeaders(), ...(opcoes.headers || {}) },
   });
 
@@ -88,6 +92,8 @@ async function iniciar() {
   registrarEventos();
 
   try {
+    await carregarPreferenciaPaginacao();
+
     [profissionais, alunos, servicos, horarios] = await Promise.all([
       requisicao("/profissionais"),
       requisicao("/alunos"),
@@ -125,19 +131,33 @@ function registrarEventos() {
   elementos.formHorario.addEventListener("submit", disponibilizarHorario);
   elementos.filtroStatus.addEventListener("change", () => {
     paginaAtual = 1;
-    renderizarAtendimentos();
+    carregarAtendimentos();
   });
 
-  elementos.paginaAnterior.addEventListener("click", () => {
-    if (paginaAtual > 1) {
-      paginaAtual--;
-      renderizarAtendimentos();
+  elementos.itensPorPagina.addEventListener("change", async () => {
+    try {
+      itensPorPagina = Number(elementos.itensPorPagina.value);
+      paginaAtual = 1;
+      await salvarPreferenciaPaginacao(itensPorPagina);
+      await carregarAtendimentos();
+      mostrarMensagem("Preferência de paginação salva com sucesso.");
+    } catch (erro) {
+      mostrarMensagem(erro.message, "erro");
     }
   });
 
-  elementos.proximaPagina.addEventListener("click", () => {
-    paginaAtual++;
-    renderizarAtendimentos();
+  elementos.paginaAnterior.addEventListener("click", async () => {
+    if (paginaAtual > 1) {
+      paginaAtual--;
+      await carregarAtendimentos();
+    }
+  });
+
+  elementos.proximaPagina.addEventListener("click", async () => {
+    if (paginaAtual < totalPaginas) {
+      paginaAtual++;
+      await carregarAtendimentos();
+    }
   });
 
   elementos.listaAtendimentos.addEventListener("click", (evento) => {
@@ -284,38 +304,58 @@ async function excluirHorario(id) {
   }
 }
 
+async function carregarPreferenciaPaginacao() {
+  const preferencia = await requisicao("/preferencias/paginacao");
+
+  itensPorPagina = preferencia.itensPorPagina;
+  elementos.itensPorPagina.value = String(itensPorPagina);
+}
+
+async function salvarPreferenciaPaginacao(valor) {
+  await requisicao("/preferencias/paginacao", {
+    method: "POST",
+    body: JSON.stringify({
+      itensPorPagina: Number(valor),
+    }),
+  });
+}
+
 async function carregarAtendimentos() {
-  atendimentos = await requisicao(`/atendimentos?profissionalId=${profissionalAtual.id}`);
-  atualizarResumo();
+  const parametros = new URLSearchParams({
+    profissionalId: String(profissionalAtual.id),
+    pagina: String(paginaAtual),
+    limite: String(itensPorPagina),
+  });
+
+  if (elementos.filtroStatus.value) {
+    parametros.set("status", elementos.filtroStatus.value);
+  }
+
+  const resposta = await requisicao(`/atendimentos?${parametros.toString()}`);
+
+  atendimentos = resposta.dados;
+  paginaAtual = resposta.paginacao.pagina;
+  totalPaginas = resposta.paginacao.totalPaginas;
+  totalAtendimentos = resposta.paginacao.totalItens;
+
+  atualizarResumo(resposta.resumo);
   renderizarAtendimentos();
 }
 
-function atualizarResumo() {
-  elementos.totalAgendados.textContent = atendimentos.filter((item) => item.status === "Agendado").length;
-  elementos.totalConcluidos.textContent = atendimentos.filter((item) => item.status === "Concluido").length;
-  elementos.totalCancelados.textContent = atendimentos.filter((item) => item.status === "Cancelado").length;
+function atualizarResumo(resumo) {
+  elementos.totalAgendados.textContent = resumo.agendados;
+  elementos.totalConcluidos.textContent = resumo.concluidos;
+  elementos.totalCancelados.textContent = resumo.cancelados;
 }
 
 function renderizarAtendimentos() {
-  const status = elementos.filtroStatus.value;
-  const filtrados = (status
-    ? atendimentos.filter((atendimento) => atendimento.status === status)
-    : [...atendimentos]
-  ).sort((a, b) => b.id - a.id);
-
-  if (filtrados.length === 0) {
+  if (atendimentos.length === 0) {
     elementos.listaAtendimentos.innerHTML = '<p class="estado-vazio">Nenhum atendimento encontrado.</p>';
     elementos.paginacao.hidden = true;
     return;
   }
 
-  const totalPaginas = Math.ceil(filtrados.length / ITENS_POR_PAGINA);
-  paginaAtual = Math.min(Math.max(paginaAtual, 1), totalPaginas);
-
-  const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
-  const atendimentosDaPagina = filtrados.slice(inicio, inicio + ITENS_POR_PAGINA);
-
-  elementos.listaAtendimentos.innerHTML = atendimentosDaPagina.map((atendimento) => {
+  elementos.listaAtendimentos.innerHTML = atendimentos.map((atendimento) => {
     const aluno = alunos.find((item) => item.id === atendimento.alunoId);
     const servico = servicos.find((item) => item.id === atendimento.servicoId);
     const horario = horarios.find((item) => item.id === atendimento.horarioId);
@@ -340,7 +380,7 @@ function renderizarAtendimentos() {
   }).join("");
 
   elementos.paginacao.hidden = totalPaginas <= 1;
-  elementos.infoPagina.textContent = `Página ${paginaAtual} de ${totalPaginas} — ${filtrados.length} atendimento(s)`;
+  elementos.infoPagina.textContent = `Página ${paginaAtual} de ${totalPaginas} — ${totalAtendimentos} atendimento(s)`;
   elementos.paginaAnterior.disabled = paginaAtual === 1;
   elementos.proximaPagina.disabled = paginaAtual === totalPaginas;
 }

@@ -138,7 +138,8 @@
 
 .form-profissional label,
 .form-horario label,
-.filtro-status {
+.filtro-status,
+.filtro-paginacao {
   display: flex;
   flex-direction: column;
   gap: 7px;
@@ -151,7 +152,8 @@
 .form-horario input,
 .form-profissional button,
 .form-horario button,
-.filtro-status select {
+.filtro-status select,
+.filtro-paginacao select {
   margin: 0;
 }
 
@@ -188,7 +190,14 @@
   font-size: 0.88rem;
 }
 
-.filtro-status {
+.filtros-atendimentos {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+}
+
+.filtro-status,
+.filtro-paginacao {
   min-width: 180px;
 }
 
@@ -312,6 +321,12 @@
   .form-horario {
     grid-template-columns: 1fr;
   }
-  .filtro-status { width: 100%; }
+  .filtros-atendimentos {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .filtro-status,
+  .filtro-paginacao { width: 100%; }
   .paginacao { flex-wrap: wrap; }
 }

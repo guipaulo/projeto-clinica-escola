@@ -110,15 +110,26 @@
           <h2>Meus atendimentos</h2>
           <p>Acompanhe, conclua ou cancele os atendimentos.</p>
         </div>
-        <label class="filtro-status">
-          Status
-          <select id="filtroStatus">
-            <option value="">Todos</option>
-            <option value="Agendado">Agendados</option>
-            <option value="Concluido">Concluídos</option>
-            <option value="Cancelado">Cancelados</option>
-          </select>
-        </label>
+        <div class="filtros-atendimentos">
+          <label class="filtro-status">
+            Status
+            <select id="filtroStatus">
+              <option value="">Todos</option>
+              <option value="Agendado">Agendados</option>
+              <option value="Concluido">Concluídos</option>
+              <option value="Cancelado">Cancelados</option>
+            </select>
+          </label>
+
+          <label class="filtro-paginacao">
+            Por página
+            <select id="itensPorPagina">
+              <option value="8">8 atendimentos</option>
+              <option value="16">16 atendimentos</option>
+              <option value="24">24 atendimentos</option>
+            </select>
+          </label>
+        </div>
       </div>
 
       <div id="listaAtendimentos" class="lista-atendimentos">

@@ -1,6 +1,17 @@
-import { IsIn, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsIn, IsInt, IsOptional, Max, Min } from 'class-validator';
 
 export class FiltroAtendimentoDto {
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  pagina?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  limite?: number;
+
   @IsOptional()
   @IsInt()
   @Min(1)
