@@ -1,173 +1,249 @@
-const API = "http://localhost:3000";
+const API_USUARIOS = "http://localhost:3000/usuarios";
 
-const usuario = JSON.parse(localStorage.getItem("usuario"));
 const token = localStorage.getItem("token");
+const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
 
-function headers() {
-    return {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-    };
-}
-
-// ============================
-// PROTEÇÃO
-// ============================
-
-if (!usuario || usuario.perfil !== "aluno") {
-    window.location.href = "../login.html";
-}
-
-// ============================
-// LOGOUT
-// ============================
-
-document.getElementById("logout").onclick = () => {
-    localStorage.clear();
-    window.location.href = "../login.html";
+const elementos = {
+  usuarioLogado: document.getElementById("usuario-logado"),
+  logout: document.getElementById("logout"),
+  formCadastro: document.getElementById("formCadastro"),
+  listarUsuarios: document.getElementById("listarUsuarios"),
+  pesquisa: document.getElementById("pesquisa"),
+  corpoTabela: document.getElementById("corpoTabela"),
+  cardEditar: document.getElementById("cardEditar"),
+  formEditar: document.getElementById("formEditar"),
+  cancelarEdicao: document.getElementById("cancelarEdicao"),
+  resultado: document.getElementById("resultado"),
 };
 
-document.getElementById("usuario-logado").innerText =
-    `${usuario.nome} (Aluno)`;
+let usuariosCache = [];
 
-// ============================
-// PEGAR ID DO ALUNO
-// ============================
+if (!token || !usuario || usuario.perfil !== "admin") {
+  localStorage.removeItem("token");
+  localStorage.removeItem("usuario");
+  window.location.replace("index.html");
+} else {
+  iniciarPainel();
+}
 
-let alunoId = null;
+function getHeaders() {
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+}
 
-async function pegarAluno() {
-    const res = await fetch(`${API}/alunos`, { headers: headers() });
-    const alunos = await res.json();
+async function requisicao(caminho = "", opcoes = {}) {
+  const resposta = await fetch(`${API_USUARIOS}${caminho}`, {
+    ...opcoes,
+    headers: { ...getHeaders(), ...(opcoes.headers || {}) },
+  });
 
-    const aluno = alunos.find(a => a.email === usuario.email);
+  const corpo = resposta.status === 204
+    ? null
+    : await resposta.json().catch(() => ({}));
 
-    if (!aluno) {
-        document.getElementById("msg").innerText = "Aluno não encontrado";
-        return;
-    }
+  if (resposta.status === 401) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+    window.location.replace("index.html");
+    throw new Error("Sua sessão expirou. Faça login novamente.");
+  }
 
-    alunoId = aluno.id;
+  if (!resposta.ok) {
+    const mensagem = Array.isArray(corpo?.message)
+      ? corpo.message.join(" ")
+      : corpo?.message || "Não foi possível concluir a operação.";
+    throw new Error(mensagem);
+  }
 
-    document.getElementById("dadosAluno").innerHTML = `
-        Nome: ${aluno.nome}<br>
-        Email: ${aluno.email || "-"}<br>
-        Telefone: ${aluno.telefone || "-"}
+  return corpo;
+}
+
+function escaparHtml(valor) {
+  return String(valor ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function mostrarResultado(mensagem, tipo = "sucesso") {
+  elementos.resultado.textContent = mensagem;
+  elementos.resultado.className = `mensagem ${tipo}`;
+}
+
+function iniciarPainel() {
+  elementos.usuarioLogado.textContent = `${usuario.nome} (Administrador)`;
+
+  elementos.logout.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+    window.location.href = "index.html";
+  });
+
+  elementos.formCadastro.addEventListener("submit", cadastrarUsuario);
+  elementos.listarUsuarios.addEventListener("click", carregarUsuarios);
+  elementos.pesquisa.addEventListener("input", filtrarUsuarios);
+  elementos.formEditar.addEventListener("submit", salvarEdicao);
+  elementos.cancelarEdicao.addEventListener("click", fecharEdicao);
+  elementos.corpoTabela.addEventListener("click", tratarAcaoTabela);
+
+  carregarUsuarios();
+}
+
+async function carregarUsuarios() {
+  try {
+    usuariosCache = await requisicao();
+    renderizarTabela(usuariosCache);
+    mostrarResultado("Lista de usuários carregada com sucesso.");
+  } catch (erro) {
+    mostrarResultado(erro.message, "erro");
+  }
+}
+
+function renderizarTabela(lista) {
+  if (lista.length === 0) {
+    elementos.corpoTabela.innerHTML = `
+      <tr><td colspan="7">Nenhum usuário encontrado.</td></tr>
     `;
+    return;
+  }
+
+  elementos.corpoTabela.innerHTML = lista.map((item) => {
+    const data = item.criadoEm
+      ? new Date(item.criadoEm).toLocaleString("pt-BR")
+      : "-";
+    const acaoStatus = item.ativo ? "inativar" : "reativar";
+    const textoStatus = item.ativo ? "Inativar" : "Reativar";
+    const classeStatus = item.ativo ? "btn-inativar" : "btn-reativar";
+    const proprioUsuario = item.id === usuario.id;
+
+    return `
+      <tr>
+        <td>${item.id}</td>
+        <td>${escaparHtml(item.nome)}</td>
+        <td>${escaparHtml(item.email)}</td>
+        <td>${escaparHtml(item.perfil)}</td>
+        <td><span class="status ${item.ativo ? "status-ativo" : "status-inativo"}">${item.ativo ? "Ativo" : "Inativo"}</span></td>
+        <td>${escaparHtml(data)}</td>
+        <td class="acoes-tabela">
+          <button type="button" class="btn-editar" data-acao="editar" data-id="${item.id}">Editar</button>
+          <button type="button" class="${classeStatus}" data-acao="${acaoStatus}" data-id="${item.id}" ${proprioUsuario ? "disabled title=\"Você não pode alterar seu próprio status nesta tela\"" : ""}>${textoStatus}</button>
+        </td>
+      </tr>
+    `;
+  }).join("");
 }
 
-// ============================
-// CARREGAR SERVIÇOS
-// ============================
+function filtrarUsuarios() {
+  const termo = elementos.pesquisa.value.trim().toLowerCase();
 
-async function carregarServicos() {
-    const res = await fetch(`${API}/servicos`, { headers: headers() });
-    const servicos = await res.json();
+  const filtrados = usuariosCache.filter((item) =>
+    String(item.id).includes(termo) ||
+    item.nome.toLowerCase().includes(termo) ||
+    item.email.toLowerCase().includes(termo) ||
+    item.perfil.toLowerCase().includes(termo) ||
+    (item.ativo ? "ativo" : "inativo").includes(termo)
+  );
 
-    const select = document.getElementById("servico");
+  renderizarTabela(filtrados);
+}
 
-    servicos.forEach(s => {
-        select.innerHTML += `
-            <option value="${s.id}">
-                ${s.nome} (${s.duracao}min)
-            </option>
-        `;
+async function cadastrarUsuario(evento) {
+  evento.preventDefault();
+  const dados = Object.fromEntries(new FormData(evento.currentTarget).entries());
+
+  try {
+    await requisicao("", {
+      method: "POST",
+      body: JSON.stringify(dados),
     });
+    evento.currentTarget.reset();
+    await carregarUsuarios();
+    mostrarResultado("Usuário cadastrado com sucesso.");
+  } catch (erro) {
+    mostrarResultado(erro.message, "erro");
+  }
 }
 
-// ============================
-// CARREGAR HORÁRIOS
-// ============================
+function abrirEdicao(id) {
+  const item = usuariosCache.find((usuarioItem) => usuarioItem.id === id);
+  if (!item) return;
 
-async function carregarHorarios() {
-    const res = await fetch(`${API}/horarios`, { headers: headers() });
-    const horarios = await res.json();
+  const form = elementos.formEditar.elements;
+  form.id.value = item.id;
+  form.nome.value = item.nome;
+  form.email.value = item.email;
+  form.senha.value = "";
+  form.perfil.value = item.perfil;
+  form.ativo.value = String(item.ativo);
 
-    const select = document.getElementById("horario");
-
-    select.innerHTML = "";
-
-    horarios
-        .filter(h => h.status === "disponivel")
-        .forEach(h => {
-            select.innerHTML += `
-                <option value="${h.id}">
-                    ${h.data} ${h.horaInicio}-${h.horaFim}
-                </option>
-            `;
-        });
+  elementos.cardEditar.style.display = "block";
+  elementos.cardEditar.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-// ============================
-// AGENDAR
-// ============================
-
-async function agendar() {
-    const dados = {
-        alunoId,
-        profissionalId: Number(document.getElementById("profissionalId").value),
-        servicoId: Number(document.getElementById("servico").value),
-        horarioId: Number(document.getElementById("horario").value)
-    };
-
-    try {
-        const res = await fetch(`${API}/atendimentos`, {
-            method: "POST",
-            headers: headers(),
-            body: JSON.stringify(dados)
-        });
-
-        const resposta = await res.json();
-
-        if (!res.ok) throw new Error(resposta.message);
-
-        document.getElementById("msg").innerText =
-            "Agendado com sucesso!";
-
-        carregarAtendimentos();
-        carregarHorarios();
-
-    } catch (err) {
-        document.getElementById("msg").innerText =
-            err.message || "Erro ao agendar";
-    }
+function fecharEdicao() {
+  elementos.formEditar.reset();
+  elementos.cardEditar.style.display = "none";
 }
 
-// ============================
-// LISTAR MEUS ATENDIMENTOS
-// ============================
+async function salvarEdicao(evento) {
+  evento.preventDefault();
+  const form = evento.currentTarget;
+  const id = Number(form.elements.id.value);
 
-async function carregarAtendimentos() {
-    if (!alunoId) return;
+  const dados = {
+    nome: form.elements.nome.value.trim(),
+    email: form.elements.email.value.trim(),
+    perfil: form.elements.perfil.value,
+    ativo: form.elements.ativo.value === "true",
+  };
 
-    const res = await fetch(
-        `${API}/atendimentos?alunoId=${alunoId}`,
-        { headers: headers() }
+  const senha = form.elements.senha.value.trim();
+  if (senha) dados.senha = senha;
+
+  try {
+    await requisicao(`/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(dados),
+    });
+    fecharEdicao();
+    await carregarUsuarios();
+    mostrarResultado("Usuário atualizado com sucesso.");
+  } catch (erro) {
+    mostrarResultado(erro.message, "erro");
+  }
+}
+
+async function alterarStatus(id, acao) {
+  try {
+    await requisicao(`/${id}/${acao}`, { method: "PATCH" });
+    await carregarUsuarios();
+    mostrarResultado(
+      acao === "inativar"
+        ? "Usuário inativado com sucesso."
+        : "Usuário reativado com sucesso."
     );
-
-    const lista = await res.json();
-
-    const ul = document.getElementById("listaAtendimentos");
-    ul.innerHTML = "";
-
-    lista.forEach(a => {
-        ul.innerHTML += `
-            <li>
-                Atendimento #${a.id} - ${a.status}
-            </li>
-        `;
-    });
+  } catch (erro) {
+    mostrarResultado(erro.message, "erro");
+  }
 }
 
-// ============================
-// INIT
-// ============================
+function tratarAcaoTabela(evento) {
+  const botao = evento.target.closest("button[data-acao]");
+  if (!botao || botao.disabled) return;
 
-async function init() {
-    await pegarAluno();
-    await carregarServicos();
-    await carregarHorarios();
-    await carregarAtendimentos();
+  const id = Number(botao.dataset.id);
+  const acao = botao.dataset.acao;
+
+  if (acao === "editar") {
+    abrirEdicao(id);
+    return;
+  }
+
+  if (acao === "inativar" || acao === "reativar") {
+    alterarStatus(id, acao);
+  }
 }
-
-init();

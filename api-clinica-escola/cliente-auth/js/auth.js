@@ -1,24 +1,28 @@
-export function getAuthHeaders() {
-  const token = localStorage.getItem('token');
+(function protegerPagina() {
+  const token = localStorage.getItem("token");
+  const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+  const perfilEsperado = document.body.dataset.perfil;
 
-  return {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  };
-}
-
-export function verificarAcesso(perfilEsperado) {
-  const usuario = JSON.parse(localStorage.getItem('usuario'));
-
-  if (!usuario || usuario.perfil !== perfilEsperado) {
-    alert('Acesso negado!');
-    window.location.href = 'index.html';
+  if (!token || !usuario || (perfilEsperado && usuario.perfil !== perfilEsperado)) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+    window.location.replace("index.html");
+    return;
   }
 
-  return usuario;
-}
-
-export function logout() {
-  localStorage.clear();
-  window.location.href = 'index.html';
-}
+  window.auth = {
+    token,
+    usuario,
+    headers() {
+      return {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+    },
+    logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("usuario");
+      window.location.href = "index.html";
+    },
+  };
+})();

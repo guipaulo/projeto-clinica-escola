@@ -50,7 +50,25 @@ export class UsuariosService {
       criadoEm: new Date().toISOString(),
     },
     {
-      id: 3,
+    id: 3,
+      nome: 'Leandro Silva',
+      email: 'leandro@example.com',
+      senha:'$2b$10$.1mI3W1j1JiOUzp.pvtML.5te2sxucAdObCz5IqnGPYP.usHzdZOC',
+      perfil: 'aluno',
+      ativo: true,
+      criadoEm: new Date().toISOString(),
+    },
+    {
+    id: 4,
+      nome: 'Joyce Oliveira',
+      email: 'joyce@example.com',
+      senha:'$2b$10$.1mI3W1j1JiOUzp.pvtML.5te2sxucAdObCz5IqnGPYP.usHzdZOC',
+      perfil: 'aluno',
+      ativo: true,
+      criadoEm: new Date().toISOString(),
+    },
+    {
+      id: 5,
       nome: 'Jose Henrique',
       email: 'jose@example.com',
       senha:'$2b$10$k0iKp0iVFuSwIXysfzwkTeDGahJLW1lVIsXllvgbpWT/Uy9BXZxkG',
@@ -59,14 +77,50 @@ export class UsuariosService {
       criadoEm: new Date().toISOString(),
     },
     {
-      id: 4,
-      nome: 'Nicole Carvalho',
+      id: 5,
+      nome: 'Dra. Nicole Carvalho',
       email: 'nicole@example.com',
       senha:'$2b$10$JAVhJpbIKv5pHfr1zyWKDOe0oEybwISbjlO4xGc0gH.XW0bR9ddvW',
       perfil: 'profissional',
       ativo: true,
       criadoEm: new Date().toISOString(),
     },
+    {
+      id: 6,
+      nome: 'Dra. Ana Costa',
+      email: 'ana@email.com',
+      senha: '$2b$10$k0iKp0iVFuSwIXysfzwkTeDGahJLW1lVIsXllvgbpWT/Uy9BXZxkG',
+      perfil: 'profissional',
+      ativo: true,
+      criadoEm: new Date().toISOString(),
+    },
+    {
+      id: 7,
+      nome: 'Dr. Carlos Azevedo',
+      email: 'carlos@example.com',
+      senha: '$2b$10$k0iKp0iVFuSwIXysfzwkTeDGahJLW1lVIsXllvgbpWT/Uy9BXZxkG',
+      perfil: 'profissional',
+      ativo: true,
+      criadoEm: new Date().toISOString(),
+    },
+    {
+      id: 8,
+      nome: 'Dra. Maria Chaves',
+      email: 'mariachaves@email.com',
+      senha: '$2b$10$k0iKp0iVFuSwIXysfzwkTeDGahJLW1lVIsXllvgbpWT/Uy9BXZxkG',
+      perfil: 'profissional',
+      ativo: true,
+      criadoEm: new Date().toISOString(),
+    },
+    {
+      id: 9,
+      nome: 'Dr. Daniel Silva',
+      email: 'danielsilva@email.com',
+      senha: '$2b$10$k0iKp0iVFuSwIXysfzwkTeDGahJLW1lVIsXllvgbpWT/Uy9BXZxkG',
+      perfil: 'profissional',
+      ativo: true,
+      criadoEm: new Date().toISOString(),
+    }
   ];
 
   async criar(dados: CriarUsuarioDto): Promise<UsuarioSemSenha> {
@@ -94,13 +148,7 @@ export class UsuariosService {
 
     const usuarioSemSenha = this.removerSenha(novoUsuario);
 
-    if (usuarioSemSenha.perfil === 'aluno') {
-      this.alunosService.criarAPartirDoUsuario(usuarioSemSenha);
-    }
-
-    if (usuarioSemSenha.perfil === 'profissional') {
-      this.profissionaisService.criarAPartirDoUsuario(usuarioSemSenha);
-    }
+    this.sincronizarCadastroDoPerfil(usuarioSemSenha);
 
     return usuarioSemSenha;
   }
@@ -175,7 +223,22 @@ export class UsuariosService {
       usuario.senha = await bcrypt.hash(dados.senha, 10);
     }
 
-    return this.removerSenha(usuario);
+    const usuarioSemSenha = this.removerSenha(usuario);
+    this.sincronizarCadastroDoPerfil(usuarioSemSenha);
+
+    return usuarioSemSenha;
+  }
+
+  sincronizarCadastroDoPerfil(usuario: UsuarioSemSenha) {
+    if (usuario.perfil === 'aluno') {
+      return this.alunosService.criarAPartirDoUsuario(usuario);
+    }
+
+    if (usuario.perfil === 'profissional') {
+      return this.profissionaisService.criarAPartirDoUsuario(usuario);
+    }
+
+    return null;
   }
 
   inativar(id: number): UsuarioSemSenha {

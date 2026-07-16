@@ -11,6 +11,10 @@ const elementos = {
   listaHorarios: document.getElementById("listaHorarios"),
   listaAtendimentos: document.getElementById("listaAtendimentos"),
   filtroStatus: document.getElementById("filtroStatus"),
+  paginacao: document.getElementById("paginacao"),
+  paginaAnterior: document.getElementById("paginaAnterior"),
+  proximaPagina: document.getElementById("proximaPagina"),
+  infoPagina: document.getElementById("infoPagina"),
   totalAgendados: document.getElementById("totalAgendados"),
   totalConcluidos: document.getElementById("totalConcluidos"),
   totalCancelados: document.getElementById("totalCancelados"),
@@ -26,6 +30,8 @@ let alunos = [];
 let servicos = [];
 let horarios = [];
 let atendimentos = [];
+let paginaAtual = 1;
+const ITENS_POR_PAGINA = 8;
 
 if (!usuario || !token || usuario.perfil !== "profissional") {
   localStorage.removeItem("token");
@@ -117,7 +123,22 @@ function registrarEventos() {
 
   elementos.formProfissional.addEventListener("submit", atualizarProfissional);
   elementos.formHorario.addEventListener("submit", disponibilizarHorario);
-  elementos.filtroStatus.addEventListener("change", renderizarAtendimentos);
+  elementos.filtroStatus.addEventListener("change", () => {
+    paginaAtual = 1;
+    renderizarAtendimentos();
+  });
+
+  elementos.paginaAnterior.addEventListener("click", () => {
+    if (paginaAtual > 1) {
+      paginaAtual--;
+      renderizarAtendimentos();
+    }
+  });
+
+  elementos.proximaPagina.addEventListener("click", () => {
+    paginaAtual++;
+    renderizarAtendimentos();
+  });
 
   elementos.listaAtendimentos.addEventListener("click", (evento) => {
     const botao = evento.target.closest("[data-status]");
@@ -198,8 +219,15 @@ function dataParaApi(data) {
 
 async function disponibilizarHorario(evento) {
   evento.preventDefault();
+
+  if (!profissionalAtual) {
+    mostrarMensagem("Cadastro profissional não encontrado.", "erro");
+    return;
+  }
+
   const form = new FormData(evento.currentTarget);
   const dados = {
+    profissionalId: profissionalAtual.id,
     data: dataParaApi(form.get("data")),
     horaInicio: form.get("horaInicio"),
     horaFim: form.get("horaFim"),
@@ -224,7 +252,11 @@ async function carregarHorarios() {
 }
 
 function renderizarHorarios() {
-  const disponiveis = horarios.filter((horario) => horario.status === "disponivel");
+  const disponiveis = horarios.filter(
+    (horario) =>
+      horario.status === "disponivel" &&
+      horario.profissionalId === profissionalAtual?.id
+  );
 
   if (disponiveis.length === 0) {
     elementos.listaHorarios.innerHTML = '<p class="estado-vazio">Não há horários disponíveis.</p>';
@@ -266,16 +298,24 @@ function atualizarResumo() {
 
 function renderizarAtendimentos() {
   const status = elementos.filtroStatus.value;
-  const filtrados = status
+  const filtrados = (status
     ? atendimentos.filter((atendimento) => atendimento.status === status)
-    : atendimentos;
+    : [...atendimentos]
+  ).sort((a, b) => b.id - a.id);
 
   if (filtrados.length === 0) {
     elementos.listaAtendimentos.innerHTML = '<p class="estado-vazio">Nenhum atendimento encontrado.</p>';
+    elementos.paginacao.hidden = true;
     return;
   }
 
-  elementos.listaAtendimentos.innerHTML = filtrados.map((atendimento) => {
+  const totalPaginas = Math.ceil(filtrados.length / ITENS_POR_PAGINA);
+  paginaAtual = Math.min(Math.max(paginaAtual, 1), totalPaginas);
+
+  const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
+  const atendimentosDaPagina = filtrados.slice(inicio, inicio + ITENS_POR_PAGINA);
+
+  elementos.listaAtendimentos.innerHTML = atendimentosDaPagina.map((atendimento) => {
     const aluno = alunos.find((item) => item.id === atendimento.alunoId);
     const servico = servicos.find((item) => item.id === atendimento.servicoId);
     const horario = horarios.find((item) => item.id === atendimento.horarioId);
@@ -298,6 +338,11 @@ function renderizarAtendimentos() {
       </article>
     `;
   }).join("");
+
+  elementos.paginacao.hidden = totalPaginas <= 1;
+  elementos.infoPagina.textContent = `Página ${paginaAtual} de ${totalPaginas} — ${filtrados.length} atendimento(s)`;
+  elementos.paginaAnterior.disabled = paginaAtual === 1;
+  elementos.proximaPagina.disabled = paginaAtual === totalPaginas;
 }
 
 async function atualizarStatus(id, status) {

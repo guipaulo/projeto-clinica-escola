@@ -38,7 +38,11 @@ export class AutenticacaoService {
       return null;
     }
 
-    return this.usuariosService.removerSenha(usuario);
+    const usuarioSemSenha = this.usuariosService.removerSenha(usuario);
+
+    this.usuariosService.sincronizarCadastroDoPerfil(usuarioSemSenha);
+
+    return usuarioSemSenha;
   }
 
   async login(usuario: UsuarioSemSenha) {

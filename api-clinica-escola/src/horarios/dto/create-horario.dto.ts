@@ -1,7 +1,11 @@
-import { IsNotEmpty, Matches } from 'class-validator';
+import { IsInt, IsNotEmpty, Matches, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateHorarioDto {
+  @IsInt({ message: 'O ID do profissional deve ser um número inteiro.' })
+  @Min(1, { message: 'O ID do profissional deve ser maior que zero.' })
+  profissionalId!: number;
+
   @Matches(/^([0-2]?[0-9]|3[0-1])\/(0?[1-9]|1[0-2])\/\d{4}$/, {
     message: 'A data deve estar no formato DD/MM/AAAA (ex: 25/12/2026).',
   })

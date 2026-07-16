@@ -77,6 +77,16 @@ export class ProfissionaisService {
       servicesIds: [],
       ativo: true,
     },
+    {
+      id: 6,
+      name: 'Nicole Carvalho',
+      email: 'nicole@example.com',
+      phone: '(84)9999-9999',
+      registryCard: '54515454',
+      specialty: 'Fisioterapia',
+      servicesIds: [1, 2],
+      ativo: true,
+    },
   ];
 
   listar(filtros?: FiltroProfissionalDto) {
@@ -99,6 +109,17 @@ export class ProfissionaisService {
     }
 
     return resultado;
+  }
+
+  buscarPorEmail(email: string) {
+    const emailNormalizado = email.trim().toLowerCase();
+
+    return (
+      this.profissionais.find(
+        (profissional) =>
+          profissional.email.trim().toLowerCase() === emailNormalizado,
+      ) ?? null
+    );
   }
 
   buscarPorId(id: number) {
@@ -155,6 +176,13 @@ export class ProfissionaisService {
   }
 
   criarAPartirDoUsuario(usuario: UsuarioSemSenha) {
+    const profissionalExistente = this.buscarPorEmail(usuario.email);
+
+    if (profissionalExistente) {
+      profissionalExistente.ativo = usuario.ativo;
+      return profissionalExistente;
+    }
+
     const novoId =
       this.profissionais.length > 0
         ? Math.max(...this.profissionais.map((p) => p.id)) + 1

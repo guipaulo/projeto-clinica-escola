@@ -263,6 +263,33 @@
   border-radius: 10px;
 }
 
+.paginacao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.paginacao[hidden] {
+  display: none;
+}
+
+.btn-pagina {
+  min-width: 95px;
+  padding: 9px 14px;
+}
+
+.btn-pagina:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+#infoPagina {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 900px) {
   .form-profissional,
   .form-horario {
@@ -286,4 +313,5 @@
     grid-template-columns: 1fr;
   }
   .filtro-status { width: 100%; }
+  .paginacao { flex-wrap: wrap; }
 }

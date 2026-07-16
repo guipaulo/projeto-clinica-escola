@@ -91,6 +91,7 @@ function registrarEventos() {
   elementos.formAluno.addEventListener("submit", atualizarDados);
   elementos.formAgendamento.addEventListener("submit", agendarAtendimento);
   elementos.servico.addEventListener("change", preencherProfissionais);
+  elementos.profissional.addEventListener("change", preencherHorarios);
   elementos.listaAtendimentos.addEventListener("click", (evento) => {
     const botao = evento.target.closest("[data-cancelar]");
     if (botao) cancelarAtendimento(Number(botao.dataset.cancelar));
@@ -125,7 +126,11 @@ async function atualizarDados(evento) {
   evento.preventDefault();
   if (!alunoAtual) return;
 
-  const dados = Object.fromEntries(new FormData(evento.currentTarget).entries());
+  const form = evento.currentTarget.elements;
+  const dados = {
+    nome: form.nome.value.trim(),
+    telefone: form.telefone.value.trim(),
+  };
 
   try {
     alunoAtual = await requisicao(`/alunos/${alunoAtual.id}`, {
@@ -161,13 +166,28 @@ function preencherProfissionais() {
     ? '<option value="">Selecione primeiro o serviço</option>'
     : '<option value="">Selecione o profissional</option>' +
       filtrados.map((profissional) => `<option value="${profissional.id}">${escaparHtml(profissional.name)} — ${escaparHtml(profissional.specialty)}</option>`).join("");
+
+  preencherHorarios();
 }
 
 async function carregarHorarios() {
   horarios = await requisicao("/horarios");
-  const disponiveis = horarios.filter((horario) => horario.status === "disponivel");
-  elementos.horario.innerHTML = '<option value="">Selecione o horário</option>' +
-    disponiveis.map((horario) => `<option value="${horario.id}">${escaparHtml(horario.data)} — ${escaparHtml(horario.horaInicio)} às ${escaparHtml(horario.horaFim)}</option>`).join("");
+  preencherHorarios();
+}
+
+function preencherHorarios() {
+  const profissionalId = Number(elementos.profissional.value);
+  const disponiveis = horarios.filter(
+    (horario) =>
+      horario.status === "disponivel" &&
+      horario.profissionalId === profissionalId
+  );
+
+  elementos.horario.disabled = !profissionalId;
+  elementos.horario.innerHTML = !profissionalId
+    ? '<option value="">Selecione primeiro o profissional</option>'
+    : '<option value="">Selecione o horário</option>' +
+      disponiveis.map((horario) => `<option value="${horario.id}">${escaparHtml(horario.data)} — ${escaparHtml(horario.horaInicio)} às ${escaparHtml(horario.horaFim)}</option>`).join("");
 }
 
 async function agendarAtendimento(evento) {

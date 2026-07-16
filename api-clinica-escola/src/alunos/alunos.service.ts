@@ -29,10 +29,27 @@ export class AlunosService {
       telefone: '11888888888',
       ativo: true,
     },
+    {
+      id: 3,
+      nome: 'Paulo Guilherme',
+      telefone: '',
+      email: 'paulo@example.com',
+      ativo: true,
+    },
   ];
 
   listar() {
     return [...this.alunos];
+  }
+
+  buscarPorEmail(email: string) {
+    const emailNormalizado = email.trim().toLowerCase();
+
+    return (
+      this.alunos.find(
+        (aluno) => aluno.email?.trim().toLowerCase() === emailNormalizado,
+      ) ?? null
+    );
   }
 
   buscarPorId(id: number) {
@@ -65,6 +82,13 @@ export class AlunosService {
   }
 
   criarAPartirDoUsuario(usuario: UsuarioSemSenha) {
+    const alunoExistente = this.buscarPorEmail(usuario.email);
+
+    if (alunoExistente) {
+      alunoExistente.ativo = usuario.ativo;
+      return alunoExistente;
+    }
+
     const novoId =
       this.alunos.length > 0
         ? Math.max(...this.alunos.map((a) => a.id)) + 1
@@ -86,9 +110,12 @@ export class AlunosService {
   atualizarParcial(id: number, dados: UpdateAlunoDto) {
     const aluno = this.buscarPorId(id);
 
-    const atualizado = {
+    const atualizado: Aluno = {
       ...aluno,
-      ...dados,
+      nome: dados.nome ?? aluno.nome,
+      telefone: dados.telefone ?? aluno.telefone,
+      email: dados.email ?? aluno.email,
+      ativo: aluno.ativo,
     };
 
     this.alunos = this.alunos.map((a) =>

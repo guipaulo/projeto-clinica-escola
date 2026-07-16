@@ -28,7 +28,28 @@ export class AtendimentosService {
     private readonly horariosService: HorariosService,
     private readonly servicosService: ServicosService,
   ) {}
-  private atendimentos: Atendimento[] = [];
+  private atendimentos: Atendimento[] = [
+    { id: 1, alunoId: 1, profissionalId: 6, servicoId: 1, horarioId: 1, status: 'Concluido' },
+    { id: 2, alunoId: 2, profissionalId: 6, servicoId: 2, horarioId: 2, status: 'Concluido' },
+    { id: 3, alunoId: 3, profissionalId: 6, servicoId: 1, horarioId: 3, status: 'Cancelado' },
+    { id: 4, alunoId: 1, profissionalId: 6, servicoId: 2, horarioId: 1, status: 'Concluido' },
+    { id: 5, alunoId: 2, profissionalId: 6, servicoId: 1, horarioId: 7, status: 'Agendado' },
+    { id: 6, alunoId: 3, profissionalId: 6, servicoId: 2, horarioId: 3, status: 'Concluido' },
+    { id: 7, alunoId: 1, profissionalId: 6, servicoId: 1, horarioId: 1, status: 'Cancelado' },
+    { id: 8, alunoId: 2, profissionalId: 6, servicoId: 2, horarioId: 2, status: 'Concluido' },
+    { id: 9, alunoId: 3, profissionalId: 6, servicoId: 1, horarioId: 3, status: 'Concluido' },
+    { id: 10, alunoId: 1, profissionalId: 6, servicoId: 2, horarioId: 8, status: 'Agendado' },
+    { id: 11, alunoId: 2, profissionalId: 6, servicoId: 1, horarioId: 2, status: 'Concluido' },
+    { id: 12, alunoId: 3, profissionalId: 6, servicoId: 2, horarioId: 3, status: 'Cancelado' },
+    { id: 13, alunoId: 1, profissionalId: 6, servicoId: 1, horarioId: 1, status: 'Concluido' },
+    { id: 14, alunoId: 2, profissionalId: 6, servicoId: 2, horarioId: 2, status: 'Concluido' },
+    { id: 15, alunoId: 3, profissionalId: 6, servicoId: 1, horarioId: 9, status: 'Agendado' },
+    { id: 16, alunoId: 1, profissionalId: 6, servicoId: 2, horarioId: 1, status: 'Concluido' },
+    { id: 17, alunoId: 2, profissionalId: 6, servicoId: 1, horarioId: 2, status: 'Cancelado' },
+    { id: 18, alunoId: 3, profissionalId: 6, servicoId: 2, horarioId: 3, status: 'Concluido' },
+    { id: 19, alunoId: 1, profissionalId: 6, servicoId: 1, horarioId: 10, status: 'Agendado' },
+    { id: 20, alunoId: 2, profissionalId: 6, servicoId: 2, horarioId: 2, status: 'Concluido' },
+  ];
 
   listarAtendimentos(filtros?: FiltroAtendimentoDto) {
   let resultado = [...this.atendimentos];
@@ -105,6 +126,12 @@ export class AtendimentosService {
       throw new ConflictException('O horário informado não está disponível.');
     }
 
+    if (horario.profissionalId !== profissional.id) {
+      throw new ConflictException(
+        'O horário selecionado não pertence ao profissional informado.',
+      );
+    }
+
     if (!profissional.servicesIds.includes(servico.id)) {
       throw new ConflictException(
         'O profissional informado não realiza o serviço informado.',
@@ -175,4 +202,3 @@ export class AtendimentosService {
     return { mensagem: `Atendimento ${id} removido com sucesso` };
   }
 }
-

@@ -9,6 +9,7 @@ import { UpdateHorarioDto } from './dto/update-horario.dto';
 
 type Horario = {
   id: number;
+  profissionalId: number;
   data: string;
   horaInicio: string;
   horaFim: string;
@@ -20,24 +21,83 @@ export class HorariosService {
   private horarios: Horario[] = [
     {
       id: 1,
+      profissionalId: 6,
       data: '10/07/2026',
+      horaInicio: '08:00',
+      horaFim: '09:00',
+      status: 'indisponivel',
+    },
+    {
+      id: 2,
+      profissionalId: 6,
+      data: '12/07/2026',
+      horaInicio: '09:00',
+      horaFim: '10:00',
+      status: 'indisponivel',
+    },
+    {
+      id: 3,
+      profissionalId: 6,
+      data: '14/07/2026',
+      horaInicio: '14:00',
+      horaFim: '15:00',
+      status: 'indisponivel',
+    },
+    {
+      id: 4,
+      profissionalId: 6,
+      data: '20/07/2026',
       horaInicio: '08:00',
       horaFim: '09:00',
       status: 'disponivel',
     },
     {
-      id: 2,
-      data: '10/08/2026',
+      id: 5,
+      profissionalId: 6,
+      data: '22/07/2026',
       horaInicio: '09:00',
       horaFim: '10:00',
       status: 'disponivel',
     },
     {
-      id: 3,
-      data: '10/09/2026',
+      id: 6,
+      profissionalId: 6,
+      data: '24/07/2026',
       horaInicio: '14:00',
       horaFim: '15:00',
       status: 'disponivel',
+    },
+    {
+      id: 7,
+      profissionalId: 6,
+      data: '26/07/2026',
+      horaInicio: '08:00',
+      horaFim: '09:00',
+      status: 'indisponivel',
+    },
+    {
+      id: 8,
+      profissionalId: 6,
+      data: '27/07/2026',
+      horaInicio: '09:00',
+      horaFim: '10:00',
+      status: 'indisponivel',
+    },
+    {
+      id: 9,
+      profissionalId: 6,
+      data: '28/07/2026',
+      horaInicio: '14:00',
+      horaFim: '15:00',
+      status: 'indisponivel',
+    },
+    {
+      id: 10,
+      profissionalId: 6,
+      data: '29/07/2026',
+      horaInicio: '15:00',
+      horaFim: '16:00',
+      status: 'indisponivel',
     },
   ];
 
@@ -94,6 +154,7 @@ export class HorariosService {
 
     const horarioDuplicado = this.horarios.find(
       (horario) =>
+        horario.profissionalId === createHorarioDto.profissionalId &&
         horario.data === createHorarioDto.data &&
         horario.horaInicio === createHorarioDto.horaInicio &&
         horario.horaFim === createHorarioDto.horaFim,
@@ -101,7 +162,7 @@ export class HorariosService {
 
     if (horarioDuplicado) {
       throw new ConflictException(
-        'Este serviço já possui esse horário cadastrado nesta data.',
+        'Este profissional já possui esse horário cadastrado nesta data.',
       );
     }
 
@@ -112,6 +173,7 @@ export class HorariosService {
 
     const novoHorario: Horario = {
       id: novoId,
+      profissionalId: createHorarioDto.profissionalId,
       data: createHorarioDto.data,
       horaInicio: createHorarioDto.horaInicio,
       horaFim: createHorarioDto.horaFim,
