@@ -9,8 +9,14 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
+  const defaultCorsOrigins = 'http://localhost:5500,http://127.0.0.1:5500';
+  const corsOrigins = (process.env.CORS_ORIGIN ?? defaultCorsOrigins)
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
   app.enableCors({
-    origin: ['http://localhost:5500', 'http://127.0.0.1:5500'],
+    origin: corsOrigins, 
     credentials: true,
   });
    
@@ -37,7 +43,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); 
 
-  await app.listen(3000);
+  const port = Number(process.env.PORT ?? 3000);
+
+  await app.listen(port, '0.0.0.0');
 }
 
 bootstrap();
