@@ -8,7 +8,7 @@ form.addEventListener('submit', async (event) => {
   const payload = Object.fromEntries(dadosFormulario.entries());
 
   try {
-    const response = await fetch('http://localhost:3000/autenticacao/login', {
+    const response = await fetch('/autenticacao/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

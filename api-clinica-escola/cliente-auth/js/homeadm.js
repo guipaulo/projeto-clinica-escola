@@ -1,4 +1,4 @@
-const API_USUARIOS = "http://localhost:3000/usuarios";
+const API_USUARIOS = "/usuarios";
 
 const token = localStorage.getItem("token");
 const usuario = JSON.parse(localStorage.getItem("usuario") || "null");

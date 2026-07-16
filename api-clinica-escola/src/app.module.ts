@@ -1,3 +1,5 @@
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -15,6 +17,10 @@ import { PreferenciasModule } from './preferencias/preferencias.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'cliente-auth'),
+      exclude: ['/api*'],
     }),
     UsuariosModule,
     PreferenciasModule,

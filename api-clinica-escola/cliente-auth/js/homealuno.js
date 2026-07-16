@@ -1,4 +1,4 @@
-const API = "http://localhost:3000";
+const API = "";
 
 const elementos = {
   usuarioLogado: document.getElementById("usuario-logado"),
