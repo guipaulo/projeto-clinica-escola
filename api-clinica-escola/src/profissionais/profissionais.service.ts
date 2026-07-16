@@ -7,6 +7,8 @@ import { CreateProfissionalDto } from './dto/create-profissional.dto';
 import { UpdateProfissionalDto } from './dto/update-profissional.dto';
 import { FiltroProfissionalDto } from './dto/filtro-profissional.dto';
 import { ServicosService } from '../servicos/servicos.service';
+import type { UsuarioSemSenha } from '../usuarios/usuarios.service';
+
 type Profissional = {
   id: number;
   name: string;
@@ -15,14 +17,15 @@ type Profissional = {
   registryCard: string;
   specialty: string;
   servicesIds: number[];
-  ativo?: boolean;
+  ativo: boolean;
 };
 
 @Injectable()
 export class ProfissionaisService {
   constructor(
     private readonly servicosService: ServicosService,
-  ) { }
+  ) {}
+
   private profissionais: Profissional[] = [
     {
       id: 1,
@@ -100,7 +103,9 @@ export class ProfissionaisService {
 
   criar(dados: CreateProfissionalDto) {
     const registroExiste = this.profissionais.find(
-      (p) => p.registryCard.toLowerCase() === dados.registryCard.toLowerCase(),
+      (p) =>
+        p.registryCard.toLowerCase() ===
+        dados.registryCard.toLowerCase(),
     );
 
     if (registroExiste) {
@@ -139,9 +144,30 @@ export class ProfissionaisService {
     };
   }
 
+  criarAPartirDoUsuario(usuario: UsuarioSemSenha) {
+    const novoId =
+      this.profissionais.length > 0
+        ? Math.max(...this.profissionais.map((p) => p.id)) + 1
+        : 1;
+
+    const profissional: Profissional = {
+      id: novoId,
+      name: usuario.nome,
+      email: usuario.email,
+      phone: '',
+      registryCard: '',
+      specialty: '',
+      servicesIds: [],
+      ativo: true,
+    };
+
+    this.profissionais.push(profissional);
+
+    return profissional;
+  }
+
   atualizarParcial(id: number, dados: UpdateProfissionalDto) {
     const profissional = this.buscarPorId(id);
-    const atualizado = { ...profissional, ...dados };
 
     if (dados.servicesIds !== undefined) {
       dados.servicesIds.forEach((servicoId) => {
@@ -149,9 +175,15 @@ export class ProfissionaisService {
       });
     }
 
+    const atualizado = {
+      ...profissional,
+      ...dados,
+    };
+
     this.profissionais = this.profissionais.map((p) =>
       p.id === id ? atualizado : p,
     );
+
     return atualizado;
   }
 
@@ -162,7 +194,12 @@ export class ProfissionaisService {
       throw new NotFoundException('Profissional não encontrado');
     }
 
-    this.profissionais = this.profissionais.filter((p) => p.id !== id);
-    return { mensagem: `Profissional ${id} removido com sucesso` };
+    this.profissionais = this.profissionais.filter(
+      (p) => p.id !== id,
+    );
+
+    return {
+      mensagem: `Profissional ${id} removido com sucesso`,
+    };
   }
 }
