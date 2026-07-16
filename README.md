@@ -47,6 +47,20 @@ O projeto segue a arquitetura modular do **NestJS**, com separação por respons
 
 ---
 
+### 🏛️ Diagrama de Arquitetura (Componentes)
+Este diagrama representa a estrutura física e as dependências entre os módulos da API:
+
+![Diagrama de Arquitetura](./diagramas/arquitetura.png)
+
+
+## 📊 Modelo de Dados e Entidades (Diagrama de Classes)
+
+Abaixo está o mapeamento de entidades que estruturam as informações do sistema e suas relações para viabilizar um agendamento:
+
+![Diagrama de Classes](./diagramas/entidades.png)
+
+---
+
 ## 🛠️ Tecnologias
 
 - Node.js

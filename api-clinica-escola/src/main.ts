@@ -22,6 +22,20 @@ async function bootstrap() {
     }),
   );
 
+  const config = new DocumentBuilder()
+    .setTitle('API Clínica-Escola')
+    .setDescription('Documentação dos endpoints para o gerenciamento de agendamentos da clínica.')
+    .setVersion('1.0')
+    .addTag('alunos')
+    .addTag('profissionais')
+    .addTag('servicos')
+    .addTag('horarios')
+    .addTag('atendimentos')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document); 
+
   await app.listen(3000);
 }
 
