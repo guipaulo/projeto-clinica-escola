@@ -63,7 +63,7 @@ export class UsuariosService {
       nome: 'Nicole Carvalho',
       email: 'nicole@example.com',
       senha:'$2b$10$JAVhJpbIKv5pHfr1zyWKDOe0oEybwISbjlO4xGc0gH.XW0bR9ddvW',
-      perfil: 'aluno',
+      perfil: 'profissional',
       ativo: true,
       criadoEm: new Date().toISOString(),
     },

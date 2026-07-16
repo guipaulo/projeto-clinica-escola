@@ -2,40 +2,97 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/aluno.css">
   <title>Área do Aluno</title>
 </head>
-
 <body>
+  <main class="container painel-aluno">
+    <header class="topo">
+      <div>
+        <p class="subtitulo">Clínica Escola</p>
+        <h1>Área do Aluno</h1>
+      </div>
+      <div class="usuario-acoes">
+        <span id="usuario-logado"></span>
+        <button id="logout" class="btn btn-sair" type="button">Sair</button>
+      </div>
+    </header>
 
-<h2>Área do Aluno</h2>
+    <section class="card">
+      <div class="card-cabecalho">
+        <div>
+          <h2>Meus dados</h2>
+          <p>Confira ou atualize suas informações pessoais.</p>
+        </div>
+      </div>
 
-<p id="usuario-logado"></p>
-<button id="logout">Sair</button>
+      <div id="dadosAluno" class="dados-aluno">Carregando...</div>
 
-<hr>
+      <form id="formAluno" class="form-dados">
+        <label>
+          Nome
+          <input type="text" name="nome" required minlength="3">
+        </label>
+        <label>
+          Telefone
+          <input type="text" name="telefone" required minlength="8">
+        </label>
+        <label>
+          E-mail
+          <input type="email" name="email" required>
+        </label>
+        <button class="btn" type="submit">Salvar alterações</button>
+      </form>
+    </section>
 
-<h3>Meus Dados</h3>
-<div id="dadosAluno"></div>
+    <section class="card">
+      <div class="card-cabecalho">
+        <div>
+          <h2>Agendar atendimento</h2>
+          <p>Escolha o serviço, o profissional e um horário disponível.</p>
+        </div>
+      </div>
 
-<hr>
+      <form id="formAgendamento" class="form-agendamento">
+        <label>
+          Serviço
+          <select id="servico" required>
+            <option value="">Selecione o serviço</option>
+          </select>
+        </label>
+        <label>
+          Profissional
+          <select id="profissional" required disabled>
+            <option value="">Selecione primeiro o serviço</option>
+          </select>
+        </label>
+        <label>
+          Horário
+          <select id="horario" required>
+            <option value="">Selecione o horário</option>
+          </select>
+        </label>
+        <button class="btn" type="submit">Agendar</button>
+      </form>
 
-<h3>Agendar Atendimento</h3>
+      <p id="msg" class="mensagem" role="alert" aria-live="polite"></p>
+    </section>
 
-<select id="servico"></select>
-<select id="horario"></select>
+    <section class="card">
+      <div class="card-cabecalho">
+        <div>
+          <h2>Meus atendimentos</h2>
+          <p>Acompanhe seus agendamentos e respectivos status.</p>
+        </div>
+      </div>
+      <div id="listaAtendimentos" class="lista-atendimentos">
+        <p class="estado-vazio">Carregando atendimentos...</p>
+      </div>
+    </section>
+  </main>
 
-<input type="number" id="profissionalId" placeholder="ID do Profissional">
-
-<button onclick="agendar()">Agendar</button>
-
-<p id="msg"></p>
-
-<hr>
-
-<h3>Meus Atendimentos</h3>
-<ul id="listaAtendimentos"></ul>
-
-<script src="homealuno.js"></script>
-
+  <script src="../js/homealuno.js"></script>
 </body>
 </html>

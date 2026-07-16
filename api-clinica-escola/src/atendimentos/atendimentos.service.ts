@@ -145,6 +145,15 @@ export class AtendimentosService {
     if (atendimentoAtual.status === 'Agendado' && dados.especialidade !== undefined)
       throw new ConflictException('Não é permitido alterar a especialidade de um atendimento agendado!');
 
+    if (
+      atendimentoAtual.status === 'Agendado' &&
+      dados.status === 'Cancelado'
+    ) {
+      this.horariosService.atualizarHorario(atendimentoAtual.horarioId, {
+        status: 'disponivel',
+      });
+    }
+
     const atendimentoAtualizado: Atendimento = {
       ...atendimentoAtual,
       ...dados,
@@ -166,3 +175,4 @@ export class AtendimentosService {
     return { mensagem: `Atendimento ${id} removido com sucesso` };
   }
 }
+

@@ -1,137 +1,241 @@
-const API_ALUNOS = "http://localhost:3000/alunos";
+const API = "http://localhost:3000";
 
-// ============================
-// TOKEN
-// ============================
+const elementos = {
+  usuarioLogado: document.getElementById("usuario-logado"),
+  logout: document.getElementById("logout"),
+  dadosAluno: document.getElementById("dadosAluno"),
+  formAluno: document.getElementById("formAluno"),
+  formAgendamento: document.getElementById("formAgendamento"),
+  servico: document.getElementById("servico"),
+  profissional: document.getElementById("profissional"),
+  horario: document.getElementById("horario"),
+  listaAtendimentos: document.getElementById("listaAtendimentos"),
+  msg: document.getElementById("msg"),
+};
 
-function getToken() {
-    return localStorage.getItem("token");
+const token = localStorage.getItem("token");
+const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+
+let alunoAtual = null;
+let servicos = [];
+let profissionais = [];
+let horarios = [];
+
+if (!usuario || !token || usuario.perfil !== "aluno") {
+  localStorage.removeItem("token");
+  localStorage.removeItem("usuario");
+  window.location.replace("index.html");
+} else {
+  iniciar();
 }
 
 function getHeaders() {
-    return {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${getToken()}`
-    };
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
 }
 
-// ============================
-// PROTEÇÃO DE ROTA
-// ============================
+async function requisicao(caminho, opcoes = {}) {
+  const resposta = await fetch(`${API}${caminho}`, {
+    ...opcoes,
+    headers: { ...getHeaders(), ...(opcoes.headers || {}) },
+  });
 
-const usuario = JSON.parse(localStorage.getItem("usuario"));
+  if (resposta.status === 204) return null;
 
-if (!usuario || !getToken()) {
-    window.location.href = "../login.html";
+  const corpo = await resposta.json().catch(() => ({}));
+  if (!resposta.ok) {
+    const mensagem = Array.isArray(corpo.message)
+      ? corpo.message.join(" ")
+      : corpo.message || "Não foi possível concluir a operação.";
+    throw new Error(mensagem);
+  }
+  return corpo;
 }
 
-// 🔥 bloqueia se não for aluno
-if (usuario.perfil !== "aluno") {
-    alert("Acesso permitido apenas para alunos");
-    window.location.href = "../login.html";
+function mostrarMensagem(texto, tipo = "sucesso") {
+  elementos.msg.textContent = texto;
+  elementos.msg.className = `mensagem ${tipo}`;
 }
 
-// ============================
-// LOGOUT
-// ============================
+function escaparHtml(valor) {
+  return String(valor ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
-document.getElementById("logout").onclick = () => {
+async function iniciar() {
+  elementos.usuarioLogado.textContent = `${usuario.nome} (Aluno)`;
+  registrarEventos();
+
+  try {
+    await carregarAluno();
+    await Promise.all([carregarServicos(), carregarProfissionais(), carregarHorarios()]);
+    await carregarAtendimentos();
+  } catch (erro) {
+    mostrarMensagem(erro.message, "erro");
+  }
+}
+
+function registrarEventos() {
+  elementos.logout.addEventListener("click", () => {
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
-    window.location.href = "../login.html";
-};
+    window.location.href = "index.html";
+  });
 
-// ============================
-// MOSTRAR USUÁRIO
-// ============================
-
-document.getElementById("usuario-logado").innerText =
-    `${usuario.nome} (Aluno)`;
-
-// ============================
-// BUSCAR MEUS DADOS
-// ============================
-
-let alunoId = null;
-
-async function carregarDados() {
-    try {
-        const res = await fetch(API_ALUNOS, {
-            headers: getHeaders()
-        });
-
-        const lista = await res.json();
-
-        // 🔥 encontra o aluno pelo email
-        const aluno = lista.find(a => a.email === usuario.email);
-
-        if (!aluno) {
-            document.getElementById("dadosAluno").innerText =
-                "Aluno não encontrado";
-            return;
-        }
-
-        alunoId = aluno.id;
-
-        document.getElementById("dadosAluno").innerHTML = `
-            <p><b>ID:</b> ${aluno.id}</p>
-            <p><b>Nome:</b> ${aluno.nome}</p>
-            <p><b>Telefone:</b> ${aluno.telefone || "-"}</p>
-            <p><b>Email:</b> ${aluno.email || "-"}</p>
-            <p><b>Status:</b> ${aluno.ativo ? "Ativo" : "Inativo"}</p>
-        `;
-
-        // preenche formulário
-        const form = document.getElementById("formAluno");
-        form.nome.value = aluno.nome;
-        form.telefone.value = aluno.telefone || "";
-        form.email.value = aluno.email || "";
-
-    } catch {
-        document.getElementById("msg").innerText =
-            "Erro ao carregar dados";
-    }
+  elementos.formAluno.addEventListener("submit", atualizarDados);
+  elementos.formAgendamento.addEventListener("submit", agendarAtendimento);
+  elementos.servico.addEventListener("change", preencherProfissionais);
+  elementos.listaAtendimentos.addEventListener("click", (evento) => {
+    const botao = evento.target.closest("[data-cancelar]");
+    if (botao) cancelarAtendimento(Number(botao.dataset.cancelar));
+  });
 }
 
-// ============================
-// ATUALIZAR DADOS
-// ============================
+async function carregarAluno() {
+  const alunos = await requisicao("/alunos");
+  alunoAtual = alunos.find((aluno) => aluno.email === usuario.email);
 
-document.getElementById("formAluno").onsubmit = async (e) => {
-    e.preventDefault();
+  if (!alunoAtual) {
+    throw new Error("Não foi encontrado um cadastro de aluno para este usuário.");
+  }
 
-    if (!alunoId) return;
+  renderizarDadosAluno();
+  elementos.formAluno.elements.nome.value = alunoAtual.nome;
+  elementos.formAluno.elements.telefone.value = alunoAtual.telefone || "";
+  elementos.formAluno.elements.email.value = alunoAtual.email || "";
+}
 
-    const form = new FormData(e.target);
+function renderizarDadosAluno() {
+  elementos.dadosAluno.innerHTML = `
+    <div><span>ID</span><strong>${alunoAtual.id}</strong></div>
+    <div><span>Nome</span><strong>${escaparHtml(alunoAtual.nome)}</strong></div>
+    <div><span>Telefone</span><strong>${escaparHtml(alunoAtual.telefone || "Não informado")}</strong></div>
+    <div><span>E-mail</span><strong>${escaparHtml(alunoAtual.email || "Não informado")}</strong></div>
+    <div><span>Status</span><strong class="status ${alunoAtual.ativo ? "ativo" : "cancelado"}">${alunoAtual.ativo ? "Ativo" : "Inativo"}</strong></div>
+  `;
+}
 
-    const dados = {
-        nome: form.get("nome"),
-        telefone: form.get("telefone"),
-        email: form.get("email")
-    };
+async function atualizarDados(evento) {
+  evento.preventDefault();
+  if (!alunoAtual) return;
 
-    try {
-        const res = await fetch(`${API_ALUNOS}/${alunoId}`, {
-            method: "PATCH",
-            headers: getHeaders(),
-            body: JSON.stringify(dados)
-        });
+  const dados = Object.fromEntries(new FormData(evento.currentTarget).entries());
 
-        if (!res.ok) throw new Error();
+  try {
+    alunoAtual = await requisicao(`/alunos/${alunoAtual.id}`, {
+      method: "PATCH",
+      body: JSON.stringify(dados),
+    });
+    renderizarDadosAluno();
+    mostrarMensagem("Dados atualizados com sucesso.");
+  } catch (erro) {
+    mostrarMensagem(erro.message, "erro");
+  }
+}
 
-        document.getElementById("msg").innerText =
-            "Atualizado com sucesso";
+async function carregarServicos() {
+  servicos = await requisicao("/servicos");
+  elementos.servico.innerHTML = '<option value="">Selecione o serviço</option>' +
+    servicos.map((servico) => `<option value="${servico.id}">${escaparHtml(servico.nome)} (${servico.duracao} min)</option>`).join("");
+}
 
-        carregarDados();
+async function carregarProfissionais() {
+  profissionais = await requisicao("/profissionais");
+  preencherProfissionais();
+}
 
-    } catch {
-        document.getElementById("msg").innerText =
-            "Erro ao atualizar";
-    }
-};
+function preencherProfissionais() {
+  const servicoId = Number(elementos.servico.value);
+  const filtrados = profissionais.filter((profissional) =>
+    profissional.ativo && profissional.servicesIds.includes(servicoId)
+  );
 
-// ============================
-// INIT
-// ============================
+  elementos.profissional.disabled = !servicoId;
+  elementos.profissional.innerHTML = !servicoId
+    ? '<option value="">Selecione primeiro o serviço</option>'
+    : '<option value="">Selecione o profissional</option>' +
+      filtrados.map((profissional) => `<option value="${profissional.id}">${escaparHtml(profissional.name)} — ${escaparHtml(profissional.specialty)}</option>`).join("");
+}
 
-carregarDados();
+async function carregarHorarios() {
+  horarios = await requisicao("/horarios");
+  const disponiveis = horarios.filter((horario) => horario.status === "disponivel");
+  elementos.horario.innerHTML = '<option value="">Selecione o horário</option>' +
+    disponiveis.map((horario) => `<option value="${horario.id}">${escaparHtml(horario.data)} — ${escaparHtml(horario.horaInicio)} às ${escaparHtml(horario.horaFim)}</option>`).join("");
+}
+
+async function agendarAtendimento(evento) {
+  evento.preventDefault();
+  if (!alunoAtual) return;
+
+  const dados = {
+    alunoId: alunoAtual.id,
+    profissionalId: Number(elementos.profissional.value),
+    servicoId: Number(elementos.servico.value),
+    horarioId: Number(elementos.horario.value),
+  };
+
+  try {
+    await requisicao("/atendimentos", {
+      method: "POST",
+      body: JSON.stringify(dados),
+    });
+    elementos.formAgendamento.reset();
+    preencherProfissionais();
+    await Promise.all([carregarHorarios(), carregarAtendimentos()]);
+    mostrarMensagem("Atendimento agendado com sucesso.");
+  } catch (erro) {
+    mostrarMensagem(erro.message, "erro");
+  }
+}
+
+async function carregarAtendimentos() {
+  if (!alunoAtual) return;
+  const atendimentos = await requisicao(`/atendimentos?alunoId=${alunoAtual.id}`);
+
+  if (atendimentos.length === 0) {
+    elementos.listaAtendimentos.innerHTML = '<p class="estado-vazio">Você ainda não possui atendimentos.</p>';
+    return;
+  }
+
+  elementos.listaAtendimentos.innerHTML = atendimentos.map((atendimento) => {
+    const servico = servicos.find((item) => item.id === atendimento.servicoId);
+    const profissional = profissionais.find((item) => item.id === atendimento.profissionalId);
+    const horario = horarios.find((item) => item.id === atendimento.horarioId);
+    const classeStatus = atendimento.status.toLowerCase();
+    const podeCancelar = atendimento.status === "Agendado";
+
+    return `
+      <article class="atendimento-item">
+        <div class="atendimento-info">
+          <h3>${escaparHtml(servico?.nome || `Serviço ${atendimento.servicoId}`)}</h3>
+          <p><strong>Profissional:</strong> ${escaparHtml(profissional?.name || `ID ${atendimento.profissionalId}`)}</p>
+          <p><strong>Horário:</strong> ${horario ? `${escaparHtml(horario.data)} — ${escaparHtml(horario.horaInicio)} às ${escaparHtml(horario.horaFim)}` : `ID ${atendimento.horarioId}`}</p>
+        </div>
+        <div class="acoes">
+          <span class="status ${classeStatus}">${escaparHtml(atendimento.status)}</span>
+          ${podeCancelar ? `<button type="button" class="btn btn-sm btn-cancelar" data-cancelar="${atendimento.id}">Cancelar</button>` : ""}
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+async function cancelarAtendimento(id) {
+  try {
+    await requisicao(`/atendimentos/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status: "Cancelado" }),
+    });
+    await carregarAtendimentos();
+    mostrarMensagem("Atendimento cancelado com sucesso.");
+  } catch (erro) {
+    mostrarMensagem(erro.message, "erro");
+  }
+}
