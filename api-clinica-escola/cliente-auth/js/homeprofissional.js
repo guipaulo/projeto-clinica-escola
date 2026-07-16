@@ -1,4 +1,4 @@
-const API = `${window.location.protocol}//${window.location.hostname}:3000`;
+const API = window.location.origin;
 
 const elementos = {
   usuarioLogado: document.getElementById("usuario-logado"),
