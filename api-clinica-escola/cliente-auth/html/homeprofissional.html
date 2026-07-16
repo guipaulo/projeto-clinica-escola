@@ -1,22 +1,134 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/profissional.css">
   <title>Área do Profissional</title>
 </head>
 <body>
+  <main class="container painel-profissional">
+    <header class="topo">
+      <div>
+        <p class="subtitulo">Clínica Escola</p>
+        <h1>Área do Profissional</h1>
+      </div>
+      <div class="usuario-acoes">
+        <span id="usuario-logado"></span>
+        <button id="logout" class="btn btn-sair" type="button">Sair</button>
+      </div>
+    </header>
 
-  <h1>Painel do Profissional</h1>
+    <section class="resumo" aria-label="Resumo dos atendimentos">
+      <article class="resumo-card">
+        <span>Agendados</span>
+        <strong id="totalAgendados">0</strong>
+      </article>
+      <article class="resumo-card">
+        <span>Concluídos</span>
+        <strong id="totalConcluidos">0</strong>
+      </article>
+      <article class="resumo-card">
+        <span>Cancelados</span>
+        <strong id="totalCancelados">0</strong>
+      </article>
+    </section>
 
-  <button onclick="carregarAtendimentos()">Meus Atendimentos</button>
-  <button onclick="carregarHorarios()">Horários Disponíveis</button>
+    <section class="card">
+      <div class="card-cabecalho">
+        <div>
+          <h2>Meus dados profissionais</h2>
+          <p>Confira e atualize seus dados e serviços.</p>
+        </div>
+      </div>
 
-  <h2>Atendimentos</h2>
-  <ul id="listaAtendimentos"></ul>
+      <div id="dadosProfissional" class="dados-profissional">Carregando...</div>
 
-  <h2>Horários Disponíveis</h2>
-  <ul id="listaHorarios"></ul>
+      <form id="formProfissional" class="form-profissional">
+        <label>
+          Nome
+          <input name="name" type="text" required>
+        </label>
+        <label>
+          E-mail
+          <input name="email" type="email" readonly title="O e-mail de acesso não pode ser alterado neste painel">
+        </label>
+        <label>
+          Telefone
+          <input name="phone" type="text" required>
+        </label>
+        <label>
+          Registro profissional
+          <input name="registryCard" type="text" required>
+        </label>
+        <label>
+          Especialidade
+          <input name="specialty" type="text" required>
+        </label>
+        <label>
+          Serviços realizados
+          <select id="servicosProfissional" name="servicesIds" multiple required></select>
+          <small>Use Ctrl para selecionar mais de um serviço.</small>
+        </label>
+        <button class="btn" type="submit">Salvar alterações</button>
+      </form>
+    </section>
 
-  <script src="homeprofissional.js"></script>
+    <section class="card">
+      <div class="card-cabecalho">
+        <div>
+          <h2>Disponibilizar horário</h2>
+          <p>Cadastre um período para os atendimentos da clínica.</p>
+        </div>
+      </div>
+
+      <form id="formHorario" class="form-horario">
+        <label>
+          Data
+          <input id="dataHorario" name="data" type="date" required>
+        </label>
+        <label>
+          Hora inicial
+          <input name="horaInicio" type="time" required>
+        </label>
+        <label>
+          Hora final
+          <input name="horaFim" type="time" required>
+        </label>
+        <button class="btn" type="submit">Disponibilizar</button>
+      </form>
+
+      <div id="listaHorarios" class="lista-horarios">
+        <p class="estado-vazio">Carregando horários...</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-cabecalho cabecalho-filtro">
+        <div>
+          <h2>Meus atendimentos</h2>
+          <p>Acompanhe, conclua ou cancele os atendimentos.</p>
+        </div>
+        <label class="filtro-status">
+          Status
+          <select id="filtroStatus">
+            <option value="">Todos</option>
+            <option value="Agendado">Agendados</option>
+            <option value="Concluido">Concluídos</option>
+            <option value="Cancelado">Cancelados</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="listaAtendimentos" class="lista-atendimentos">
+        <p class="estado-vazio">Carregando atendimentos...</p>
+      </div>
+    </section>
+
+    <p id="msg" class="mensagem" role="alert" aria-live="polite"></p>
+  </main>
+
+  <script src="../js/homeprofissional.js"></script>
 </body>
 </html>

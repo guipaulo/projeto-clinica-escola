@@ -67,6 +67,16 @@ export class ProfissionaisService {
       servicesIds: [3],
       ativo: true,
     },
+    {
+      id: 5,
+      name: 'Jose Henrique',
+      email: 'jose@example.com',
+      phone: '',
+      registryCard: '',
+      specialty: '',
+      servicesIds: [],
+      ativo: true,
+    },
   ];
 
   listar(filtros?: FiltroProfissionalDto) {
