@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@nestjs/swagger": "^11.4.5",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/passport-local": "^1.0.38"
+  }
+}
